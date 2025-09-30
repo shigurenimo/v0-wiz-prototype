@@ -1,9 +1,9 @@
 "use client"
 
+import { useReducer } from "react"
+import { TypewriterText } from "@/components/typewriter-text"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { TypewriterText } from "@/components/typewriter-text"
-import { useReducer } from "react"
 
 type EventType = "SCENERY" | "DAMAGE" | "ITEM"
 
@@ -41,7 +41,11 @@ const damageEvents = [
   { message: "ドラゴンの息!", damage: 20 },
 ]
 
-const itemEvents = ["魔法の薬を手に入れた。", "盾を発見した。", "宝箱から金貨が取れた。"]
+const itemEvents = [
+  "魔法の薬を手に入れた。",
+  "盾を発見した。",
+  "宝箱から金貨が取れた。",
+]
 
 function generateRandomEvent(): {
   type: EventType
@@ -80,7 +84,11 @@ function wizReducer(state: WizState, action: WizAction): WizState {
       const event = generateRandomEvent()
       const newDepth = state.depth + 1
 
-      const newParty = [...state.party] as [PartyMember, PartyMember, PartyMember]
+      const newParty = [...state.party] as [
+        PartyMember,
+        PartyMember,
+        PartyMember,
+      ]
       let newItems = state.items
 
       if (event.type === "DAMAGE" && event.damage) {
@@ -117,7 +125,8 @@ function wizReducer(state: WizState, action: WizAction): WizState {
 }
 
 const initialState: WizState = {
-  currentMessage: "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
+  currentMessage:
+    "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
   inputValue: "",
   depth: 0,
   party: [
@@ -141,11 +150,15 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-end p-8">
       <div className="w-full max-w-2xl space-y-6">
         <div>
-          <TypewriterText key={state.depth} text={state.currentMessage} speed={50} />
+          <TypewriterText
+            key={state.depth}
+            text={state.currentMessage}
+            speed={50}
+          />
         </div>
 
         <div className="space-y-2">
-          <div className="flex gap-2 font-mono text-sm text-primary">
+          <div className="flex gap-2 font-mono text-primary text-sm">
             <div>深度: {state.depth}</div>
             <div>
               生命: {player.hp}/{player.maxHp}
@@ -156,7 +169,9 @@ export default function Home() {
           <div className="flex gap-2">
             <Input
               value={state.inputValue}
-              onChange={(e) => dispatch({ type: "SET_INPUT", payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({ type: "SET_INPUT", payload: e.target.value })
+              }
               onKeyDown={(e) => e.key === "Enter" && handleSpeak()}
               placeholder="何か言ってみる.."
               className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
@@ -170,7 +185,7 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="flex gap-2 justify-start">
+          <div className="flex justify-start gap-2">
             <Button
               onClick={() => dispatch({ type: "NEXT_MESSAGE" })}
               variant="outline"

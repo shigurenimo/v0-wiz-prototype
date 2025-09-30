@@ -25,7 +25,11 @@ interface TypewriterTextProps {
   onComplete?: () => void
 }
 
-export function TypewriterText({ text, speed = 50, onComplete }: TypewriterTextProps) {
+export function TypewriterText({
+  text,
+  speed = 50,
+  onComplete,
+}: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
   const [noisyChars, setNoisyChars] = useState<string[]>([])
@@ -36,7 +40,7 @@ export function TypewriterText({ text, speed = 50, onComplete }: TypewriterTextP
     setCurrentIndex(0)
     setIsComplete(false)
     setNoisyChars([])
-  }, [text])
+  }, [])
 
   useEffect(() => {
     if (currentIndex < text.length) {
@@ -63,7 +67,8 @@ export function TypewriterText({ text, speed = 50, onComplete }: TypewriterTextP
 
       for (let i = noiseStart; i < length; i++) {
         if (Math.random() > 0.5) {
-          newNoisyChars[i] = NOISE_CHARS[Math.floor(Math.random() * NOISE_CHARS.length)]
+          newNoisyChars[i] =
+            NOISE_CHARS[Math.floor(Math.random() * NOISE_CHARS.length)]
         }
       }
 
@@ -88,7 +93,7 @@ export function TypewriterText({ text, speed = 50, onComplete }: TypewriterTextP
   }
 
   return (
-    <p className="font-mono text-lg leading-relaxed text-primary">
+    <p className="font-mono text-lg text-primary leading-relaxed">
       {renderText()}
       {!isComplete && <span className="animate-pulse">▮</span>}
     </p>
