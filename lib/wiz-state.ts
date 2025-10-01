@@ -2,11 +2,14 @@ import type { WizStateSceneDungeon } from "@/engine/models"
 
 export const initialState: WizStateSceneDungeon = {
   type: "dungeon",
-  currentMessage:
-    "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
   inputValue: "",
   depth: 0,
-  chatMessages: [],
+  unreadChatMessages: [
+    {
+      characterId: "system",
+      text: "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
+    },
+  ],
   vault: {
     player: {
       id: "player-1",

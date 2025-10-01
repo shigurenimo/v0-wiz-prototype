@@ -8,5 +8,6 @@ export type WizAction =
   | { type: "SET_INPUT"; payload: string }
   | { type: "SUBMIT_INPUT" }
   | { type: "ADD_CHAT_MESSAGES"; payload: WizChatMessage[] }
+  | { type: "NEXT_CHAT" }
   | { type: "STOP" }
   | { type: "UNKNOWN" }

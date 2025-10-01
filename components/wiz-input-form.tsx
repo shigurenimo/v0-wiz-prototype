@@ -14,6 +14,7 @@ type Props = {
   apiKey: string
   partyMembers: WizPartyMember[]
   currentDepth: number
+  hasUnreadMessages: boolean
 }
 
 /**
@@ -23,6 +24,7 @@ export function WizInputForm(props: Props) {
   const mutation = useMutation({
     mutationFn: generateChatMessages,
     onSuccess(result) {
+      props.dispatch({ type: "NEXT_CHAT" })
       props.dispatch({
         type: "ADD_CHAT_MESSAGES",
         payload: result.messages,
@@ -31,6 +33,11 @@ export function WizInputForm(props: Props) {
   })
 
   const onSubmit = () => {
+    if (props.hasUnreadMessages) {
+      props.dispatch({ type: "NEXT_CHAT" })
+      return
+    }
+
     const playerInput = props.inputValue
 
     props.dispatch({ type: "SUBMIT_INPUT" })
@@ -53,7 +60,7 @@ export function WizInputForm(props: Props) {
         onKeyDown={(e) => e.key === "Enter" && onSubmit()}
         placeholder="何か言ってみる.."
         className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
-        disabled={mutation.isPending}
+        disabled={mutation.isPending || props.hasUnreadMessages}
       />
       <Button
         onClick={onSubmit}
@@ -61,7 +68,7 @@ export function WizInputForm(props: Props) {
         className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
         disabled={mutation.isPending}
       >
-        {mutation.isPending ? "..." : "発言"}
+        {mutation.isPending ? "..." : props.hasUnreadMessages ? "次へ" : "発言"}
       </Button>
     </div>
   )

@@ -62,8 +62,14 @@ export function wizReducerSceneDungeon(
 
     return {
       ...state,
-      currentMessage: event.message,
       depth: newDepth,
+      unreadChatMessages: [
+        ...state.unreadChatMessages,
+        {
+          characterId: "system",
+          text: event.message,
+        },
+      ],
       vault: {
         ...state.vault,
         party: newParty,
@@ -84,7 +90,15 @@ export function wizReducerSceneDungeon(
   if (action.type === "ADD_CHAT_MESSAGES") {
     return {
       ...state,
-      chatMessages: [...state.chatMessages, ...action.payload],
+      unreadChatMessages: [...state.unreadChatMessages, ...action.payload],
+    }
+  }
+
+  if (action.type === "NEXT_CHAT") {
+    const newUnreadMessages = state.unreadChatMessages.slice(1)
+    return {
+      ...state,
+      unreadChatMessages: newUnreadMessages,
     }
   }
 

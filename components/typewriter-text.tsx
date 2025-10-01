@@ -23,12 +23,14 @@ interface TypewriterTextProps {
   text: string
   speed?: number
   onComplete?: () => void
+  characterName?: string
 }
 
 export function TypewriterText({
   text,
   speed = 50,
   onComplete,
+  characterName,
 }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -93,9 +95,16 @@ export function TypewriterText({
   }
 
   return (
-    <p className="font-mono text-lg text-primary leading-relaxed">
-      {renderText()}
-      {!isComplete && <span className="animate-pulse">▮</span>}
-    </p>
+    <div className="space-y-1">
+      {characterName && (
+        <div className="font-bold font-mono text-primary text-sm">
+          {characterName}
+        </div>
+      )}
+      <p className="font-mono text-lg text-primary leading-relaxed">
+        {renderText()}
+        {!isComplete && <span className="animate-pulse">▮</span>}
+      </p>
+    </div>
   )
 }

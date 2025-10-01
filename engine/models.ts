@@ -77,10 +77,9 @@ export type WizChatMessage = z.infer<typeof zWizChatMessage>
  */
 export const zWizStateSceneDungeon = zWizStateCore.extend({
   type: z.literal("dungeon"),
-  currentMessage: z.string(),
   inputValue: z.string(),
   depth: z.number().int().min(0),
-  chatMessages: z.array(zWizChatMessage),
+  unreadChatMessages: z.array(zWizChatMessage),
 })
 
 export type WizStateSceneDungeon = z.infer<typeof zWizStateSceneDungeon>

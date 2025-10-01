@@ -19,32 +19,41 @@ type Props = {
 export function WizSceneViewDungeon(props: Props) {
   const player = props.state.vault.party[0]
 
+  const hasUnreadMessages = props.state.unreadChatMessages.length > 1
+
+  const currentUnreadMessage = props.state.unreadChatMessages[0]
+
+  const character =
+    currentUnreadMessage &&
+    props.state.vault.party.find(
+      (member) => member.id === currentUnreadMessage.characterId,
+    )
+
+  const characterName =
+    currentUnreadMessage?.characterId === "system"
+      ? undefined
+      : (character?.name ?? "???")
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-end p-8">
       <div className="w-full max-w-2xl space-y-6">
-        <div>
+        {currentUnreadMessage && (
           <TypewriterText
-            key={props.state.depth}
-            text={props.state.currentMessage}
+            key={currentUnreadMessage.characterId + currentUnreadMessage.text}
+            text={currentUnreadMessage.text}
             speed={50}
+            characterName={characterName}
           />
-        </div>
+        )}
 
         <div className="space-y-2">
-          <div className="flex gap-2 font-mono text-primary text-sm">
-            <div>深度: {props.state.depth}</div>
-            <div>
-              生命: {player.hp}/{player.maxHp}
-            </div>
-            <div>MP: {player.mp}</div>
-          </div>
-
           <WizInputForm
             inputValue={props.state.inputValue}
             dispatch={props.dispatch}
             apiKey={props.apiKey}
             partyMembers={props.state.vault.party}
             currentDepth={props.state.depth}
+            hasUnreadMessages={hasUnreadMessages}
           />
 
           <div className="flex justify-start gap-2">
@@ -72,6 +81,13 @@ export function WizSceneViewDungeon(props: Props) {
             >
               ???
             </Button>
+          </div>
+          <div className="flex gap-2 font-mono text-primary text-sm">
+            <div>深度: {props.state.depth}</div>
+            <div>
+              生命: {player.hp}/{player.maxHp}
+            </div>
+            <div>MP: {player.mp}</div>
           </div>
         </div>
       </div>
