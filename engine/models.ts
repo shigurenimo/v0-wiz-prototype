@@ -61,6 +61,17 @@ export const zWizStateCore = z.object({
 export type WizStateCore = z.infer<typeof zWizStateCore>
 
 /**
+ * Chat Message Schema
+ * チャットメッセージ（Chat Message）を表すスキーマ
+ */
+export const zWizChatMessage = z.object({
+  characterId: z.string(),
+  text: z.string(),
+})
+
+export type WizChatMessage = z.infer<typeof zWizChatMessage>
+
+/**
  * Scene Dungeon Schema
  * ダンジョン画面（Scene Dungeon）を表すスキーマ
  */
@@ -69,6 +80,7 @@ export const zWizStateSceneDungeon = zWizStateCore.extend({
   currentMessage: z.string(),
   inputValue: z.string(),
   depth: z.number().int().min(0),
+  chatMessages: z.array(zWizChatMessage),
 })
 
 export type WizStateSceneDungeon = z.infer<typeof zWizStateSceneDungeon>

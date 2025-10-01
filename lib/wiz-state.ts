@@ -6,6 +6,7 @@ export const initialState: WizStateSceneDungeon = {
     "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
   inputValue: "",
   depth: 0,
+  chatMessages: [],
   vault: {
     player: {
       id: "player-1",

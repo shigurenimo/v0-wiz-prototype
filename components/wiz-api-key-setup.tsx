@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
 
 interface WizApiKeySetupProps {
   onApiKeySet: (apiKey: string) => void
@@ -25,13 +24,15 @@ export function WizApiKeySetup({ onApiKeySet }: WizApiKeySetupProps) {
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">Claude APIキーの設定</h1>
-          <p className="text-sm text-muted-foreground">ゲームを開始するにはClaude APIキーが必要です</p>
+          <h1 className="font-bold text-2xl">Claude APIキーの設定</h1>
+          <p className="text-muted-foreground text-sm">
+            ゲームを開始するにはClaude APIキーが必要です
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="apiKey" className="text-sm font-medium">
+            <label htmlFor="apiKey" className="font-medium text-sm">
               APIキー
             </label>
             <Input
@@ -49,7 +50,7 @@ export function WizApiKeySetup({ onApiKeySet }: WizApiKeySetupProps) {
           </Button>
         </form>
 
-        <div className="space-y-2 text-xs text-muted-foreground">
+        <div className="space-y-2 text-muted-foreground text-xs">
           <p>APIキーはブラウザのローカルストレージに保存されます。</p>
           <p>
             APIキーは

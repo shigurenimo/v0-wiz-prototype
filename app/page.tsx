@@ -1,5 +1,21 @@
+"use client"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { WizMainView } from "@/components/wiz-main-view"
+import { useClientLoading } from "@/hooks/use-client-loading"
+
+const queryClient = new QueryClient()
 
 export default function Home() {
-  return <WizMainView />
+  const isLoading = useClientLoading()
+
+  if (isLoading) {
+    return null
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WizMainView />
+    </QueryClientProvider>
+  )
 }

@@ -3,23 +3,20 @@
 import type { Dispatch } from "react"
 import { TypewriterText } from "@/components/typewriter-text"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { WizInputForm } from "@/components/wiz-input-form"
 import type { WizStateSceneDungeon } from "@/engine/models"
 import type { WizAction } from "@/engine/types"
 
 type Props = {
   state: WizStateSceneDungeon
   dispatch: Dispatch<WizAction>
+  apiKey: string
 }
 
 /**
  * WizSceneViewDungeon
  */
 export function WizSceneViewDungeon(props: Props) {
-  const onSubmit = () => {
-    props.dispatch({ type: "SUBMIT_INPUT" })
-  }
-
   const player = props.state.vault.party[0]
 
   return (
@@ -42,24 +39,13 @@ export function WizSceneViewDungeon(props: Props) {
             <div>MP: {player.mp}</div>
           </div>
 
-          <div className="flex gap-2">
-            <Input
-              value={props.state.inputValue}
-              onChange={(e) =>
-                props.dispatch({ type: "SET_INPUT", payload: e.target.value })
-              }
-              onKeyDown={(e) => e.key === "Enter" && onSubmit()}
-              placeholder="何か言ってみる.."
-              className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
-            />
-            <Button
-              onClick={onSubmit}
-              variant="outline"
-              className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
-            >
-              発言
-            </Button>
-          </div>
+          <WizInputForm
+            inputValue={props.state.inputValue}
+            dispatch={props.dispatch}
+            apiKey={props.apiKey}
+            partyMembers={props.state.vault.party}
+            currentDepth={props.state.depth}
+          />
 
           <div className="flex justify-start gap-2">
             <Button

@@ -1,39 +1,35 @@
 "use client"
 
-import { useEffect, useReducer, useState } from "react"
-import { wizReducer } from "@/app/reducers/wiz-reducer"
+import { useReducer } from "react"
+import { useApiKey } from "@/hooks/use-api-key"
 import { initialState } from "@/lib/wiz-state"
-import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
+import { wizReducer } from "@/reducers/wiz-reducer"
 import { WizApiKeySetup } from "./wiz-api-key-setup"
+import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
 
-/**
- * WizMainView
- */
 export function WizMainView() {
   const [state, dispatch] = useReducer(wizReducer, initialState)
-  const [apiKey, setApiKey] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem("claude_api_key")
-    setApiKey(storedApiKey)
-    setIsLoading(false)
-  }, [])
+  const apiKeyState = useApiKey({
+    storageKey: "wiz.key.claude",
+  })
 
-  const handleApiKeySet = (newApiKey: string) => {
-    setApiKey(newApiKey)
-  }
-
-  if (isLoading) {
+  if (apiKeyState.isLoading) {
     return null
   }
 
-  if (!apiKey) {
-    return <WizApiKeySetup onApiKeySet={handleApiKeySet} />
+  if (!apiKeyState.apiKey) {
+    return <WizApiKeySetup onApiKeySet={apiKeyState.handleApiKeySet} />
   }
 
   if (state.type === "dungeon") {
-    return <WizSceneViewDungeon state={state} dispatch={dispatch} />
+    return (
+      <WizSceneViewDungeon
+        state={state}
+        dispatch={dispatch}
+        apiKey={apiKeyState.apiKey}
+      />
+    )
   }
 
   if (state.type === "storage") {

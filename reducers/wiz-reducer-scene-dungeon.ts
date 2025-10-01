@@ -81,6 +81,13 @@ export function wizReducerSceneDungeon(
     return { ...state, inputValue: "" }
   }
 
+  if (action.type === "ADD_CHAT_MESSAGES") {
+    return {
+      ...state,
+      chatMessages: [...state.chatMessages, ...action.payload],
+    }
+  }
+
   if (action.type === "STOP") {
     console.log("選択: たちどまる")
     return state
