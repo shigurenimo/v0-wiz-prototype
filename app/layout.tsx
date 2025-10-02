@@ -1,6 +1,5 @@
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
+import { DotGothic16 } from "next/font/google"
 import type React from "react"
 import { Suspense } from "react"
 
@@ -12,6 +11,11 @@ export const metadata: Metadata = {
   generator: "v0.app",
 }
 
+const font = DotGothic16({
+  weight: "400",
+  subsets: ["latin"],
+})
+
 type Props = Readonly<{
   children: React.ReactNode
 }>
@@ -19,7 +23,7 @@ type Props = Readonly<{
 export default function RootLayout(props: Props) {
   return (
     <html lang="en" className="dark">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className={`font-sans ${font.className}`}>
         <Suspense fallback={<div>Loading...</div>}>{props.children}</Suspense>
       </body>
     </html>

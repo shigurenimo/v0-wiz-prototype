@@ -35,7 +35,15 @@ export function WizSceneViewDungeon(props: Props) {
       : (character?.name ?? "???")
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-end p-8">
+    <main className="flex min-h-screen flex-col items-center justify-between p-8">
+      <header className="flex w-full justify-start gap-2 font-mono text-primary text-sm">
+        <div>深度: {props.state.depth}</div>
+        <div>
+          生命: {player.hp}/{player.maxHp}
+        </div>
+        <div>MP: {player.mp}</div>
+      </header>
+
       <div className="w-full max-w-2xl space-y-6">
         {currentUnreadMessage && (
           <TypewriterText
@@ -81,13 +89,6 @@ export function WizSceneViewDungeon(props: Props) {
             >
               ???
             </Button>
-          </div>
-          <div className="flex gap-2 font-mono text-primary text-sm">
-            <div>深度: {props.state.depth}</div>
-            <div>
-              生命: {player.hp}/{player.maxHp}
-            </div>
-            <div>MP: {player.mp}</div>
           </div>
         </div>
       </div>
