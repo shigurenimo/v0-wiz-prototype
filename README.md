@@ -12,19 +12,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 ## Deployment
 
-Your project is live at:
-
-**[https://vercel.com/shigurenimo/v0-v0-wiz-prototype](https://vercel.com/shigurenimo/v0-v0-wiz-prototype)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.app/chat/projects/uwuW8n4w3xF](https://v0.app/chat/projects/uwuW8n4w3xF)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+```
+$ bun i
+$ bun run dev
+```
