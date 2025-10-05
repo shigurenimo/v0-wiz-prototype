@@ -1,14 +1,11 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
 import type { Dispatch } from "react"
 import { TypewriterText } from "@/components/typewriter-text"
 import { Button } from "@/components/ui/button"
 import { WizInputForm } from "@/components/wiz-input-form"
 import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
-import { DungeonRepository } from "@/engine/repositories/dungeon-repository"
 import type { WizAction } from "@/engine/types"
-import { generateSceneryMessage } from "@/lib/ai/generate-scenery-message"
 
 type Props = {
   state: WizStateSceneDungeonEntity
@@ -20,23 +17,7 @@ type Props = {
  * WizSceneViewDungeon
  */
 export function WizSceneViewDungeon(props: Props) {
-  const dungeonRepository = new DungeonRepository()
   const player = props.state.vault.members[0]
-
-  const sceneryMutation = useMutation({
-    mutationFn: generateSceneryMessage,
-    onSuccess(message) {
-      props.dispatch({
-        type: "ADD_CHAT_MESSAGES",
-        payload: [
-          {
-            characterId: "system",
-            text: message,
-          },
-        ],
-      })
-    },
-  })
 
   const hasUnreadMessages = props.state.unreadChatMessages.length > 1
 
@@ -87,25 +68,6 @@ export function WizSceneViewDungeon(props: Props) {
           />
 
           <div className="flex justify-start gap-2">
-            <Button
-              onClick={() => {
-                const dungeon = dungeonRepository.findOne(props.state.dungeonId)
-                if (dungeon) {
-                  sceneryMutation.mutate({
-                    apiKey: props.apiKey,
-                    dungeon: dungeon,
-                    state: props.state.toObject(),
-                  })
-                }
-                props.dispatch({ type: "NEXT_MESSAGE" })
-              }}
-              variant="outline"
-              size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
-              disabled={sceneryMutation.isPending}
-            >
-              {sceneryMutation.isPending ? "..." : "すすむ"}
-            </Button>
             <Button
               onClick={() => props.dispatch({ type: "STOP" })}
               variant="outline"

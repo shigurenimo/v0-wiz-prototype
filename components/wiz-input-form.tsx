@@ -61,7 +61,20 @@ export function WizInputForm(props: Props) {
       return
     }
 
-    const playerInput = props.inputValue
+    const playerInput = props.inputValue.trim()
+
+    if (playerInput === "") {
+      return
+    }
+
+    if (playerInput === "すすむ") {
+      mutation.mutate({
+        apiKey: props.apiKey,
+        playerInput: playerInput,
+        state: props.state,
+      })
+      return
+    }
 
     mutation.mutate({
       apiKey: props.apiKey,
@@ -77,8 +90,12 @@ export function WizInputForm(props: Props) {
         onChange={(e) =>
           props.dispatch({ type: "SET_INPUT", payload: e.target.value })
         }
-        onKeyDown={(e) => e.key === "Enter" && onSubmit()}
-        placeholder="何か言ってみる.."
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+            onSubmit()
+          }
+        }}
+        placeholder="発言や行動を入力（例: つかれた？ / 疲れているふりをする / すすむ）"
         className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
         disabled={mutation.isPending || props.hasUnreadMessages}
       />
@@ -86,9 +103,9 @@ export function WizInputForm(props: Props) {
         onClick={onSubmit}
         variant="outline"
         className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
-        disabled={mutation.isPending}
+        disabled={mutation.isPending || (!props.hasUnreadMessages && props.inputValue.trim() === "")}
       >
-        {mutation.isPending ? "..." : props.hasUnreadMessages ? "次へ" : "発言"}
+        {mutation.isPending ? "..." : props.hasUnreadMessages ? "次へ" : "実行"}
       </Button>
     </div>
   )
