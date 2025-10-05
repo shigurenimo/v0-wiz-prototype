@@ -1,46 +1,80 @@
-import type { WizStateSceneDungeon } from "@/engine/models"
+import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
+import { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
+import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
+import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 
-export const initialState: WizStateSceneDungeon = {
-  type: "dungeon",
-  inputValue: "",
-  depth: 0,
-  unreadChatMessages: [
-    {
-      characterId: "system",
-      text: "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
-    },
-  ],
-  vault: {
-    player: {
-      id: "player-1",
-      name: "あなた",
-    },
-    party: [
+/**
+ * Create initial Wiz state
+ */
+export function createWizState(): WizStateSceneDungeonEntity {
+  const characterRepository = new WizCharacterRepository()
+
+  const plainState: WizStateSceneDungeon = {
+    type: "dungeon",
+    dungeonId: "dungeon-1",
+    inputValue: "",
+    depth: 0,
+    unreadChatMessages: [
       {
-        id: "party-1",
-        name: "あなた",
-        hp: 50,
-        maxHp: 50,
-        mp: 30,
-        maxMp: 30,
-      },
-      {
-        id: "party-2",
-        name: "戦士",
-        hp: 60,
-        maxHp: 60,
-        mp: 10,
-        maxMp: 10,
-      },
-      {
-        id: "party-3",
-        name: "魔法使い",
-        hp: 30,
-        maxHp: 30,
-        mp: 50,
-        maxMp: 50,
+        characterId: "system",
+        text: "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
       },
     ],
-    inventory: [],
-  },
+    narrativeSettings: {
+      tone: "dark",
+      perspective: "second-person",
+      detailLevel: "detailed",
+    },
+    vault: {
+      id: "vault-1",
+      playerName: "あなた",
+      members: characterRepository.findMany().map((characterEntity) => {
+        const tempMember = new WizStateCharacterEntity({
+          id: characterEntity.id,
+          name: characterEntity.name,
+          author: characterEntity.author,
+          baseStatusPoint: characterEntity.baseStatusPoint,
+          baseStrengthPoint: characterEntity.baseStrengthPoint,
+          baseDexterityPoint: characterEntity.baseDexterityPoint,
+          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
+          profile: characterEntity.profile,
+          personality: characterEntity.personality,
+          backstory: characterEntity.backstory,
+          relationships: characterEntity.relationships,
+          exampleDialogues: characterEntity.exampleDialogues,
+          hp: 0,
+          experience: 0,
+          baseExperience: 12,
+          multiplier: 1.5,
+          strengthPoint: 0,
+          dexterityPoint: 0,
+          intelligencePoint: 0,
+        })
+        return {
+          id: characterEntity.id,
+          name: characterEntity.name,
+          author: characterEntity.author,
+          baseStatusPoint: characterEntity.baseStatusPoint,
+          baseStrengthPoint: characterEntity.baseStrengthPoint,
+          baseDexterityPoint: characterEntity.baseDexterityPoint,
+          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
+          profile: characterEntity.profile,
+          personality: characterEntity.personality,
+          backstory: characterEntity.backstory,
+          relationships: characterEntity.relationships,
+          exampleDialogues: characterEntity.exampleDialogues,
+          hp: tempMember.maxHp,
+          experience: 0,
+          baseExperience: 12,
+          multiplier: 1.5,
+          strengthPoint: 0,
+          dexterityPoint: 0,
+          intelligencePoint: 0,
+        }
+      }),
+      inventory: [],
+    },
+  }
+
+  return new WizStateSceneDungeonEntity(plainState)
 }

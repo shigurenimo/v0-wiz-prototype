@@ -4,16 +4,17 @@ import { useMutation } from "@tanstack/react-query"
 import type { Dispatch } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { WizPartyMember } from "@/engine/models"
+import type { WizStateMessage } from "@/engine/models/wiz-state-message"
+import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import type { WizAction } from "@/engine/types"
-import { generateChatMessages } from "@/lib/ai/generate-chat-messages"
+import { generateEventMessages } from "@/lib/ai/generate-event-messages"
+import { generatePlayerChatMessages } from "@/lib/ai/generate-player-chat-messages"
 
 type Props = {
   inputValue: string
   dispatch: Dispatch<WizAction>
   apiKey: string
-  partyMembers: WizPartyMember[]
-  currentDepth: number
+  state: WizStateSceneDungeon
   hasUnreadMessages: boolean
 }
 
@@ -22,12 +23,34 @@ type Props = {
  */
 export function WizInputForm(props: Props) {
   const mutation = useMutation({
-    mutationFn: generateChatMessages,
-    onSuccess(result) {
-      props.dispatch({ type: "NEXT_CHAT" })
+    mutationFn: async (variables: {
+      apiKey: string
+      playerInput: string
+      state: WizStateSceneDungeon
+    }) => {
+      const messages: WizStateMessage[] = []
+
+      // 1. 発言に対する会話を生成
+      const playerMessages = await generatePlayerChatMessages(variables)
+      for (const message of playerMessages) {
+        messages.push(message)
+      }
+
+      // 2. イベントとそれに対する会話を生成
+      const eventMessages = await generateEventMessages({
+        apiKey: variables.apiKey,
+        state: variables.state,
+      })
+      for (const message of eventMessages) {
+        messages.push(message)
+      }
+
+      return messages
+    },
+    onSuccess(messages, variables) {
       props.dispatch({
-        type: "ADD_CHAT_MESSAGES",
-        payload: result.messages,
+        type: "SUBMIT_INPUT",
+        payload: { playerInput: variables.playerInput, messages: messages },
       })
     },
   })
@@ -40,13 +63,10 @@ export function WizInputForm(props: Props) {
 
     const playerInput = props.inputValue
 
-    props.dispatch({ type: "SUBMIT_INPUT" })
-
     mutation.mutate({
       apiKey: props.apiKey,
       playerInput: playerInput,
-      partyMembers: props.partyMembers,
-      currentDepth: props.currentDepth,
+      state: props.state,
     })
   }
 

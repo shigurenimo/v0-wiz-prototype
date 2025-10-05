@@ -1,0 +1,35 @@
+{
+  "$schema": "dungeons.schema.json",
+  "items": [
+    {
+      "id": "dungeon-1",
+      "name": "忘れられた地下墓地",
+      "description": "古代の墓地。暗く冷たい石造りの回廊が続く。",
+      "environment": {
+        "lighting": "暗く湿った松明の光が揺らめく",
+        "atmosphere": "不気味な静けさの中、遠くで水滴が落ちる音が響く",
+        "temperature": "冷たく、肌に染み入るような湿気"
+      },
+      "theme": {
+        "primaryElements": ["石造り", "水", "古代"],
+        "enemies": ["スケルトン", "ゴースト", "ゾンビ"],
+        "treasures": ["古びた宝箱", "石棺", "祭壇"]
+      }
+    },
+    {
+      "id": "dungeon-2",
+      "name": "魔法の古代遺跡",
+      "description": "魔法で満たされた遺跡。不思議な光が漂う。",
+      "environment": {
+        "lighting": "青白い魔法の光が浮遊している",
+        "atmosphere": "魔力が空気を震わせ、耳鳴りのような音が響く",
+        "temperature": "不思議と快適な温度"
+      },
+      "theme": {
+        "primaryElements": ["魔法陣", "浮遊", "水晶"],
+        "enemies": ["魔法使い", "エレメンタル", "ゴーレム"],
+        "treasures": ["魔法の宝箱", "水晶", "魔導書"]
+      }
+    }
+  ]
+}

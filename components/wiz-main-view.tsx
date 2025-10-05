@@ -2,13 +2,13 @@
 
 import { useReducer } from "react"
 import { useApiKey } from "@/hooks/use-api-key"
-import { initialState } from "@/lib/wiz-state"
+import { createWizState } from "@/lib/wiz-state"
 import { wizReducer } from "@/reducers/wiz-reducer"
 import { WizApiKeySetup } from "./wiz-api-key-setup"
 import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
 
 export function WizMainView() {
-  const [state, dispatch] = useReducer(wizReducer, initialState)
+  const [state, dispatch] = useReducer(wizReducer, createWizState())
 
   const apiKeyState = useApiKey({
     storageKey: "wiz.key.claude",

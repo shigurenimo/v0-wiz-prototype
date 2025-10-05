@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "environment": {
+            "type": "object",
+            "properties": {
+              "lighting": { "type": "string" },
+              "atmosphere": { "type": "string" },
+              "temperature": { "type": "string" }
+            },
+            "required": ["lighting", "atmosphere", "temperature"]
+          },
+          "theme": {
+            "type": "object",
+            "properties": {
+              "primaryElements": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "enemies": { "type": "array", "items": { "type": "string" } },
+              "treasures": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["primaryElements", "enemies", "treasures"]
+          }
+        },
+        "required": ["id", "name", "description", "environment", "theme"]
+      }
+    }
+  },
+  "required": ["items"]
+}

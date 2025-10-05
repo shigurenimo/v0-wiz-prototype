@@ -1,0 +1,50 @@
+{
+  "$schema": "dungeon-events.schema.json",
+  "items": [
+    {
+      "id": "scenery-1",
+      "name": "暗い階段",
+      "description": "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。"
+    },
+    {
+      "id": "scenery-2",
+      "name": "冷たい風",
+      "description": "風が冷たく吹き、木々の葉がささやく。"
+    },
+    {
+      "id": "scenery-3",
+      "name": "地下の湖",
+      "description": "地下の湖に反射する光景が美しい。"
+    },
+    {
+      "id": "damage-1",
+      "name": "スライムの攻撃",
+      "description": "スライムの攻撃!"
+    },
+    {
+      "id": "damage-2",
+      "name": "ゴブリンの矢",
+      "description": "ゴブリンの矢!"
+    },
+    {
+      "id": "damage-3",
+      "name": "ドラゴンの息",
+      "description": "ドラゴンの息!"
+    },
+    {
+      "id": "item-1",
+      "name": "魔法の薬",
+      "description": "魔法の薬を手に入れた。"
+    },
+    {
+      "id": "item-2",
+      "name": "盾",
+      "description": "盾を発見した。"
+    },
+    {
+      "id": "item-3",
+      "name": "金貨",
+      "description": "宝箱から金貨が取れた。"
+    }
+  ]
+}

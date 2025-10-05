@@ -1,14 +1,17 @@
 "use client"
 
+import { useMutation } from "@tanstack/react-query"
 import type { Dispatch } from "react"
 import { TypewriterText } from "@/components/typewriter-text"
 import { Button } from "@/components/ui/button"
 import { WizInputForm } from "@/components/wiz-input-form"
-import type { WizStateSceneDungeon } from "@/engine/models"
+import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
+import { DungeonRepository } from "@/engine/repositories/dungeon-repository"
 import type { WizAction } from "@/engine/types"
+import { generateSceneryMessage } from "@/lib/ai/generate-scenery-message"
 
 type Props = {
-  state: WizStateSceneDungeon
+  state: WizStateSceneDungeonEntity
   dispatch: Dispatch<WizAction>
   apiKey: string
 }
@@ -17,31 +20,51 @@ type Props = {
  * WizSceneViewDungeon
  */
 export function WizSceneViewDungeon(props: Props) {
-  const player = props.state.vault.party[0]
+  const dungeonRepository = new DungeonRepository()
+  const player = props.state.vault.members[0]
+
+  const sceneryMutation = useMutation({
+    mutationFn: generateSceneryMessage,
+    onSuccess(message) {
+      props.dispatch({
+        type: "ADD_CHAT_MESSAGES",
+        payload: [
+          {
+            characterId: "system",
+            text: message,
+          },
+        ],
+      })
+    },
+  })
 
   const hasUnreadMessages = props.state.unreadChatMessages.length > 1
 
   const currentUnreadMessage = props.state.unreadChatMessages[0]
 
-  const character =
-    currentUnreadMessage &&
-    props.state.vault.party.find(
-      (member) => member.id === currentUnreadMessage.characterId,
-    )
+  const member =
+    currentUnreadMessage === undefined
+      ? undefined
+      : props.state.vault.members.find(
+          (m) => m.characterId === currentUnreadMessage.characterId,
+        )
 
   const characterName =
     currentUnreadMessage?.characterId === "system"
       ? undefined
-      : (character?.name ?? "???")
+      : (member?.name ?? "???")
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">
       <header className="flex w-full justify-start gap-2 font-mono text-primary text-sm">
         <div>深度: {props.state.depth}</div>
+        <div>Lv: {player.level.value}</div>
         <div>
           生命: {player.hp}/{player.maxHp}
         </div>
-        <div>MP: {player.mp}</div>
+        <div>STR: {player.strength}</div>
+        <div>DEX: {player.dexterity}</div>
+        <div>INT: {player.intelligence}</div>
       </header>
 
       <div className="w-full max-w-2xl space-y-6">
@@ -59,19 +82,29 @@ export function WizSceneViewDungeon(props: Props) {
             inputValue={props.state.inputValue}
             dispatch={props.dispatch}
             apiKey={props.apiKey}
-            partyMembers={props.state.vault.party}
-            currentDepth={props.state.depth}
+            state={props.state.toObject()}
             hasUnreadMessages={hasUnreadMessages}
           />
 
           <div className="flex justify-start gap-2">
             <Button
-              onClick={() => props.dispatch({ type: "NEXT_MESSAGE" })}
+              onClick={() => {
+                const dungeon = dungeonRepository.findOne(props.state.dungeonId)
+                if (dungeon) {
+                  sceneryMutation.mutate({
+                    apiKey: props.apiKey,
+                    dungeon: dungeon,
+                    state: props.state.toObject(),
+                  })
+                }
+                props.dispatch({ type: "NEXT_MESSAGE" })
+              }}
               variant="outline"
               size="sm"
               className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
+              disabled={sceneryMutation.isPending}
             >
-              すすむ
+              {sceneryMutation.isPending ? "..." : "すすむ"}
             </Button>
             <Button
               onClick={() => props.dispatch({ type: "STOP" })}

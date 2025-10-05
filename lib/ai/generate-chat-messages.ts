@@ -1,19 +1,25 @@
 import { createAnthropic } from "@ai-sdk/anthropic"
 import { generateObject } from "ai"
-import z from "zod"
-import type { WizPartyMember } from "@/engine/models"
+import { z } from "zod"
+import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
+import type { WizStateCharacter } from "@/engine/models/wiz-state-character"
+import type { WizStateMessage } from "@/engine/models/wiz-state-message"
+import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 
 type Props = {
   apiKey: string
   playerInput: string
-  partyMembers: WizPartyMember[]
+  partyMembers: WizStateCharacter[]
   currentDepth: number
+  previousMessages: WizStateMessage[]
 }
 
 /**
  * generateChatMessages
  */
 export async function generateChatMessages(props: Props) {
+  const characterRepository = new WizCharacterRepository()
+
   const anthropic = createAnthropic({
     apiKey: props.apiKey,
     headers: {
@@ -22,7 +28,21 @@ export async function generateChatMessages(props: Props) {
   })
 
   const partyInfo = props.partyMembers
-    .map((member) => `- ${member.name} (ID: ${member.id})`)
+    .map((memberState) => {
+      const character = characterRepository.findOne(memberState.id)
+      const entity = new WizStateCharacterEntity(memberState)
+      return `- ${character?.name} (ID: ${character?.id}): HP ${entity.hp}/${entity.maxHp}, STR ${entity.strength}, DEX ${entity.dexterity}, INT ${entity.intelligence}`
+    })
+    .join("\n")
+
+  const conversationHistory = props.previousMessages
+    .map((message) => {
+      if (message.characterId === "system") {
+        return `[ナレーション] ${message.text}`
+      }
+      const character = characterRepository.findOne(message.characterId)
+      return `${character?.name}: ${message.text}`
+    })
     .join("\n")
 
   const result = await generateObject({
@@ -37,12 +57,23 @@ export async function generateChatMessages(props: Props) {
         .min(0)
         .max(2),
     }),
-    prompt: `あなたはダンジョン探索RPGのパーティメンバーです。
+    system: `あなたはダンジョン探索RPGのパーティメンバーです。
 
 パーティ構成:
 ${partyInfo}
 
 現在の深度: ${props.currentDepth}
+
+重要な指示:
+- キャラクターとして自然に応答してください
+- メタ的な発言（「深度1だから」「これぐらいで」など）は避けてください
+- ダンジョン内での冒険者として、状況に応じた発言をしてください
+- キャラクターの性格や職業に合わせた発言をしてください`,
+    messages: [
+      {
+        role: "user",
+        content: `これまでの会話:
+${conversationHistory}
 
 プレイヤーの発言: "${props.playerInput}"
 
@@ -51,6 +82,8 @@ ${partyInfo}
 - 各メッセージには発言するキャラクターのIDと発言内容を含めてください
 - characterIdはpartyの中から選んでください（プレイヤー本人のIDは除く）
 - 短く自然な会話を心がけてください`,
+      },
+    ],
   })
 
   return result.object
