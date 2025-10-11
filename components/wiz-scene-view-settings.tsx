@@ -10,8 +10,8 @@ import type { WizAction } from "@/engine/types"
 type Props = {
   state: WizStateSceneSettingsEntity
   dispatch: Dispatch<WizAction>
-  apiKey: string
-  onApiKeyDelete: () => void
+  secretKey: string
+  onSecretKeyDelete: () => void
 }
 
 /**
@@ -20,17 +20,11 @@ type Props = {
 export function WizSceneViewSettings(props: Props) {
   const [showFullKey, setShowFullKey] = useState(false)
 
-  const maskedKey = props.apiKey
-    ? `${props.apiKey.slice(0, 8)}${"*".repeat(20)}${props.apiKey.slice(-4)}`
-    : ""
+  const maskedKey = props.secretKey ? `${props.secretKey.slice(0, 4)}${"*".repeat(12)}${props.secretKey.slice(-4)}` : ""
 
   const handleDelete = () => {
-    if (
-      window.confirm(
-        "APIキーを削除しますか？削除すると再度入力が必要になります。",
-      )
-    ) {
-      props.onApiKeyDelete()
+    if (window.confirm("シークレットキーを削除しますか？削除すると再度入力が必要になります。")) {
+      props.onSecretKeyDelete()
     }
   }
 
@@ -41,13 +35,11 @@ export function WizSceneViewSettings(props: Props) {
 
         <div className="space-y-4 rounded-lg border border-border bg-secondary p-6">
           <div className="space-y-2">
-            <label className="font-medium font-mono text-primary text-sm">
-              Google AI APIキー
-            </label>
+            <label className="font-medium font-mono text-primary text-sm">シークレットキー</label>
             <div className="flex gap-2">
               <Input
                 type={showFullKey ? "text" : "password"}
-                value={showFullKey ? props.apiKey : maskedKey}
+                value={showFullKey ? props.secretKey : maskedKey}
                 readOnly
                 className="font-mono"
               />
@@ -62,13 +54,8 @@ export function WizSceneViewSettings(props: Props) {
             </div>
           </div>
 
-          <Button
-            onClick={handleDelete}
-            variant="destructive"
-            size="sm"
-            className="font-mono"
-          >
-            APIキーを削除
+          <Button onClick={handleDelete} variant="destructive" size="sm" className="font-mono">
+            シークレットキーを削除
           </Button>
         </div>
 

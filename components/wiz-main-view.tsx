@@ -1,36 +1,30 @@
 "use client"
 
 import { useReducer } from "react"
-import { useApiKey } from "@/hooks/use-api-key"
+import { useSecretKey } from "@/hooks/use-secret-key"
 import { createWizState } from "@/lib/wiz-state"
 import { wizReducer } from "@/reducers/wiz-reducer"
-import { WizApiKeySetup } from "./wiz-api-key-setup"
+import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
 import { WizSceneViewSettings } from "./wiz-scene-view-settings"
 
 export function WizMainView() {
   const [state, dispatch] = useReducer(wizReducer, createWizState())
 
-  const apiKeyState = useApiKey({
-    storageKey: "wiz.key.google",
+  const secretKeyState = useSecretKey({
+    storageKey: "wiz.secret.key",
   })
 
-  if (apiKeyState.isLoading) {
+  if (secretKeyState.isLoading) {
     return null
   }
 
-  if (!apiKeyState.apiKey) {
-    return <WizApiKeySetup onApiKeySet={apiKeyState.handleApiKeySet} />
+  if (!secretKeyState.secretKey) {
+    return <WizSecretKeySetup onSecretKeySet={secretKeyState.handleSecretKeySet} />
   }
 
   if (state.type === "dungeon") {
-    return (
-      <WizSceneViewDungeon
-        state={state}
-        dispatch={dispatch}
-        apiKey={apiKeyState.apiKey}
-      />
-    )
+    return <WizSceneViewDungeon state={state} dispatch={dispatch} secretKey={secretKeyState.secretKey} />
   }
 
   if (state.type === "settings") {
@@ -38,8 +32,8 @@ export function WizMainView() {
       <WizSceneViewSettings
         state={state}
         dispatch={dispatch}
-        apiKey={apiKeyState.apiKey}
-        onApiKeyDelete={apiKeyState.handleApiKeyDelete}
+        secretKey={secretKeyState.secretKey}
+        onSecretKeyDelete={secretKeyState.handleSecretKeyDelete}
       />
     )
   }

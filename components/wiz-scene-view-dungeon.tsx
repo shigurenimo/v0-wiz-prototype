@@ -9,7 +9,7 @@ import type { WizAction } from "@/engine/types"
 type Props = {
   state: WizStateSceneDungeonEntity
   dispatch: Dispatch<WizAction>
-  apiKey: string
+  secretKey: string
 }
 
 /**
@@ -35,7 +35,7 @@ export function WizSceneViewDungeon(props: Props) {
         <WizInputForm
           inputValue={props.state.inputValue}
           dispatch={props.dispatch}
-          apiKey={props.apiKey}
+          secretKey={props.secretKey}
           state={props.state.toObject()}
         />
 

@@ -3,22 +3,35 @@
 import { experimental_useObject as useObject } from "@ai-sdk/react"
 import type { Dispatch } from "react"
 import { useState } from "react"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import type { WizAction } from "@/engine/types"
-import {
-  messageSchema,
-  streamChatMessages,
-} from "@/lib/ai/stream-chat-messages"
-import { eventSchema, streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
+
+const messageSchema = z.object({
+  messages: z
+    .object({
+      characterId: z.string(),
+      text: z.string(),
+    })
+    .array()
+    .min(0)
+    .max(2),
+})
+
+const eventSchema = z.object({
+  event: z.object({
+    text: z.string(),
+  }),
+})
 
 type Props = {
   inputValue: string
   dispatch: Dispatch<WizAction>
-  apiKey: string
+  secretKey: string
   state: WizStateSceneDungeon
 }
 
@@ -30,39 +43,24 @@ export function WizInputForm(props: Props) {
   const [waitingForPartyResponse, setWaitingForPartyResponse] = useState(false)
   const [lastEventText, setLastEventText] = useState("")
   const [chatPlayerInput, setChatPlayerInput] = useState("")
-  const [_accumulatedMessages, _setAccumulatedMessages] = useState<
-    WizStateMessage[]
-  >([])
+  const [_accumulatedMessages, _setAccumulatedMessages] = useState<WizStateMessage[]>([])
 
-  // チャット用（プレイヤー入力への仲間の応答）
   const chat = useObject({
     api: "/api/chat",
     schema: messageSchema,
-    fetch: async () => {
-      console.log("[v0] Starting chat generation with input:", chatPlayerInput)
-      console.log("[v0] API Key exists:", !!props.apiKey)
-
-      const result = streamChatMessages({
-        apiKey: props.apiKey,
-        playerInput: chatPlayerInput,
-        partyMembers: props.state.vault.members,
-        currentDepth: props.state.depth,
-        previousMessages: props.state.chatMessages,
-      })
-
-      return result.toTextStreamResponse()
+    body: {
+      secretKey: props.secretKey,
+      playerInput: chatPlayerInput,
+      partyMembers: props.state.vault.members,
+      currentDepth: props.state.depth,
+      previousMessages: props.state.chatMessages,
     },
     onFinish: (result) => {
-      console.log("[v0] Chat generation finished:", result.object)
-
       if (result.object?.messages) {
         const validMessages = result.object.messages.filter(
           (msg): msg is WizStateMessage =>
-            msg !== undefined &&
-            typeof msg.characterId === "string" &&
-            typeof msg.text === "string",
+            msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
         )
-        // 履歴に追加
         props.dispatch({
           type: "ADD_CHAT_MESSAGES",
           payload: validMessages,
@@ -71,39 +69,24 @@ export function WizInputForm(props: Props) {
     },
   })
 
-  // イベント用（「進む」で発生）
   const event = useObject({
     api: "/api/event",
     schema: eventSchema,
-    fetch: async () => {
-      console.log(
-        "[v0] Starting event generation at depth:",
-        props.state.depth + 1,
-      )
-      console.log("[v0] API Key exists:", !!props.apiKey)
-
-      const result = streamDungeonEvent({
-        apiKey: props.apiKey,
-        currentDepth: props.state.depth + 1,
-        partyMembers: props.state.vault.members,
-      })
-
-      return result.toTextStreamResponse()
+    body: {
+      secretKey: props.secretKey,
+      currentDepth: props.state.depth + 1,
+      partyMembers: props.state.vault.members,
     },
     onFinish: (result) => {
-      console.log("[v0] Event generation finished:", result.object)
-
       if (result.object?.event) {
         const eventMessage: WizStateMessage = {
           characterId: "system",
           text: result.object.event.text,
         }
-        // 履歴に追加
         props.dispatch({
           type: "ADD_CHAT_MESSAGES",
           payload: [eventMessage],
         })
-        // イベントテキストを保存して、仲間の応答待ちに
         setLastEventText(result.object.event.text)
         setWaitingForPartyResponse(true)
       }
@@ -111,10 +94,7 @@ export function WizInputForm(props: Props) {
   })
 
   const onSubmitChat = () => {
-    console.log("[v0] onSubmitChat called")
-
     if (chat.isLoading || event.isLoading) {
-      console.log("[v0] Already loading, skipping")
       return
     }
 
@@ -124,10 +104,8 @@ export function WizInputForm(props: Props) {
       return
     }
 
-    // 蓄積メッセージをリセット
     _setAccumulatedMessages([])
 
-    // プレイヤー入力を履歴に追加
     const playerMessage: WizStateMessage = {
       characterId: props.state.vault.members[0].id,
       text: playerInput,
@@ -141,25 +119,17 @@ export function WizInputForm(props: Props) {
       },
     })
 
-    // チャット入力を設定してから生成開始
     setChatPlayerInput(playerInput)
-
-    // ストリーミング生成を開始
     chat.submit({})
   }
 
   const onProceed = () => {
-    console.log("[v0] onProceed called")
-
     if (chat.isLoading || event.isLoading) {
-      console.log("[v0] Already loading, skipping")
       return
     }
 
-    // 蓄積メッセージをリセット
     _setAccumulatedMessages([])
 
-    // 深度を増やす
     props.dispatch({
       type: "SUBMIT_INPUT",
       payload: {
@@ -168,30 +138,21 @@ export function WizInputForm(props: Props) {
       },
     })
 
-    // イベント生成を開始
     event.submit({})
   }
 
   const onPartyResponse = () => {
     setWaitingForPartyResponse(false)
-
-    // 蓄積メッセージをリセット
     _setAccumulatedMessages([])
-
-    // チャット入力を設定してから生成開始
     setChatPlayerInput(lastEventText)
     setLastEventText("")
-
-    // イベントに対する仲間の応答を生成
     chat.submit({})
   }
 
   const isLoading = chat.isLoading || event.isLoading
 
-  // 表示用のメッセージリスト
   const displayMessages: WizStateMessage[] = []
 
-  // イベント生成中
   if (event.object?.event?.text) {
     displayMessages.push({
       characterId: "system",
@@ -199,17 +160,13 @@ export function WizInputForm(props: Props) {
     })
   }
 
-  // チャット生成中のメッセージを表示して蓄積
   if (chat.object?.messages) {
     const validMessages = chat.object.messages.filter(
       (msg): msg is WizStateMessage =>
-        msg !== undefined &&
-        typeof msg.characterId === "string" &&
-        typeof msg.text === "string",
+        msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
     )
     displayMessages.push(...validMessages)
 
-    // 蓄積メッセージを更新
     if (validMessages.length > _accumulatedMessages.length) {
       _setAccumulatedMessages(validMessages)
     }
@@ -217,27 +174,17 @@ export function WizInputForm(props: Props) {
 
   return (
     <div className="space-y-4">
-      {/* メッセージ表示エリア */}
       <div className="space-y-4">
         {displayMessages.map((message, index) => {
           const character =
-            message.characterId === "system"
-              ? undefined
-              : characterRepository.findOne(message.characterId)
+            message.characterId === "system" ? undefined : characterRepository.findOne(message.characterId)
 
-          const characterName =
-            message.characterId === "system"
-              ? undefined
-              : (character?.name ?? "???")
+          const characterName = message.characterId === "system" ? undefined : (character?.name ?? "???")
 
           return (
             <div key={`${message.characterId}-${index}`}>
               <div className="space-y-1">
-                {characterName && (
-                  <div className="font-mono text-primary text-sm">
-                    {characterName}
-                  </div>
-                )}
+                {characterName && <div className="font-mono text-primary text-sm">{characterName}</div>}
                 <div className="font-mono text-primary">{message.text}</div>
               </div>
             </div>
@@ -245,7 +192,6 @@ export function WizInputForm(props: Props) {
         })}
       </div>
 
-      {/* 入力エリア */}
       {waitingForPartyResponse ? (
         <Button
           onClick={onPartyResponse}
@@ -258,9 +204,7 @@ export function WizInputForm(props: Props) {
         <div className="flex gap-2">
           <Input
             value={props.inputValue}
-            onChange={(e) =>
-              props.dispatch({ type: "SET_INPUT", payload: e.target.value })
-            }
+            onChange={(e) => props.dispatch({ type: "SET_INPUT", payload: e.target.value })}
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                 onSubmitChat()
