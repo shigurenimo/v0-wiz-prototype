@@ -94,10 +94,7 @@ export class WizStateSceneDungeonEntity {
   withNextMessage(): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      currentMessageIndex: Math.min(
-        this.state.currentMessageIndex + 1,
-        this.state.chatMessages.length - 1,
-      ),
+      currentMessageIndex: Math.min(this.state.currentMessageIndex + 1, this.state.chatMessages.length - 1),
     })
   }
 
@@ -105,18 +102,14 @@ export class WizStateSceneDungeonEntity {
    * アイテムをインベントリに追加
    */
   withAddedItem(itemId: string): WizStateSceneDungeonEntity {
-    const existingItem = this.state.vault.inventory.find(
-      (item) => item.itemId === itemId,
-    )
+    const existingItem = this.state.vault.inventory.find((item) => item.itemId === itemId)
     return new WizStateSceneDungeonEntity({
       ...this.state,
       vault: {
         ...this.state.vault,
         inventory: existingItem
           ? this.state.vault.inventory.map((item) =>
-              item.itemId === itemId
-                ? { ...item, quantity: item.quantity + 1 }
-                : item,
+              item.itemId === itemId ? { ...item, quantity: item.quantity + 1 } : item,
             )
           : [...this.state.vault.inventory, { itemId: itemId, quantity: 1 }],
       },
