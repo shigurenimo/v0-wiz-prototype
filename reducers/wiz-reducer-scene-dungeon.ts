@@ -1,13 +1,12 @@
+import { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
 import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
 import type { WizAction } from "@/engine/types"
+import type { WizStateEntity } from "@/engine/entities/wiz-state-entity"
 
 /**
  * wizReducerSceneDungeon
  */
-export function wizReducerSceneDungeon(
-  state: WizStateSceneDungeonEntity,
-  action: WizAction,
-): WizStateSceneDungeonEntity {
+export function wizReducerSceneDungeon(state: WizStateSceneDungeonEntity, action: WizAction): WizStateEntity {
   if (action.type === "NEXT_MESSAGE") {
     return state.withNextMessage()
   }
@@ -18,10 +17,7 @@ export function wizReducerSceneDungeon(
 
   if (action.type === "SUBMIT_INPUT") {
     console.log(`発言: ${action.payload.playerInput}`)
-    return state
-      .withIncrementedDepth()
-      .withInputValue("")
-      .withMessages(action.payload.messages)
+    return state.withIncrementedDepth().withInputValue("").withMessages(action.payload.messages)
   }
 
   if (action.type === "ADD_CHAT_MESSAGES") {
@@ -33,8 +29,9 @@ export function wizReducerSceneDungeon(
   }
 
   if (action.type === "STOP") {
-    console.log("選択: たちどまる")
-    return state
+    return new WizStateSceneSettingsEntity({
+      type: "settings",
+    })
   }
 
   if (action.type === "UNKNOWN") {

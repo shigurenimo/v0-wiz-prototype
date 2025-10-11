@@ -6,6 +6,7 @@ import { createWizState } from "@/lib/wiz-state"
 import { wizReducer } from "@/reducers/wiz-reducer"
 import { WizApiKeySetup } from "./wiz-api-key-setup"
 import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
+import { WizSceneViewSettings } from "./wiz-scene-view-settings"
 
 export function WizMainView() {
   const [state, dispatch] = useReducer(wizReducer, createWizState())
@@ -23,11 +24,16 @@ export function WizMainView() {
   }
 
   if (state.type === "dungeon") {
+    return <WizSceneViewDungeon state={state} dispatch={dispatch} apiKey={apiKeyState.apiKey} />
+  }
+
+  if (state.type === "settings") {
     return (
-      <WizSceneViewDungeon
+      <WizSceneViewSettings
         state={state}
         dispatch={dispatch}
         apiKey={apiKeyState.apiKey}
+        onApiKeyDelete={apiKeyState.handleApiKeyDelete}
       />
     )
   }

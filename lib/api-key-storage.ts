@@ -19,4 +19,11 @@ export class ApiKeyStorage {
   save(apiKey: string): void {
     localStorage.setItem(this.storageKey, apiKey)
   }
+
+  /**
+   * Delete API key from storage
+   */
+  delete(): void {
+    localStorage.removeItem(this.storageKey)
+  }
 }

@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react"
 import { ApiKeyStorage } from "@/lib/api-key-storage"
 
@@ -26,5 +28,11 @@ export function useApiKey(props: Props) {
     setApiKey(newApiKey)
   }
 
-  return { apiKey, isLoading, handleApiKeySet }
+  const handleApiKeyDelete = () => {
+    const storage = new ApiKeyStorage(props.storageKey)
+    storage.delete()
+    setApiKey(null)
+  }
+
+  return { apiKey, isLoading, handleApiKeySet, handleApiKeyDelete }
 }

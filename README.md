@@ -12,7 +12,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 ## Deployment
 
-```
+\`\`\`
 $ bun i
 $ bun run dev
-```
+\`\`\`

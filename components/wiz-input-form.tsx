@@ -9,10 +9,7 @@ import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import type { WizAction } from "@/engine/types"
-import {
-  messageSchema,
-  streamChatMessages,
-} from "@/lib/ai/stream-chat-messages"
+import { messageSchema, streamChatMessages } from "@/lib/ai/stream-chat-messages"
 import { eventSchema, streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
 
 type Props = {
@@ -36,6 +33,9 @@ export function WizInputForm(props: Props) {
     api: "/api/chat",
     schema: messageSchema,
     fetch: async () => {
+      console.log("[v0] Starting chat generation with input:", chatPlayerInput)
+      console.log("[v0] API Key exists:", !!props.apiKey)
+
       const result = streamChatMessages({
         apiKey: props.apiKey,
         playerInput: chatPlayerInput,
@@ -47,12 +47,12 @@ export function WizInputForm(props: Props) {
       return result.toTextStreamResponse()
     },
     onFinish: (result) => {
+      console.log("[v0] Chat generation finished:", result.object)
+
       if (result.object?.messages) {
         const validMessages = result.object.messages.filter(
           (msg): msg is WizStateMessage =>
-            msg !== undefined &&
-            typeof msg.characterId === "string" &&
-            typeof msg.text === "string",
+            msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
         )
         // 履歴に追加
         props.dispatch({
@@ -68,6 +68,9 @@ export function WizInputForm(props: Props) {
     api: "/api/event",
     schema: eventSchema,
     fetch: async () => {
+      console.log("[v0] Starting event generation at depth:", props.state.depth + 1)
+      console.log("[v0] API Key exists:", !!props.apiKey)
+
       const result = streamDungeonEvent({
         apiKey: props.apiKey,
         currentDepth: props.state.depth + 1,
@@ -77,6 +80,8 @@ export function WizInputForm(props: Props) {
       return result.toTextStreamResponse()
     },
     onFinish: (result) => {
+      console.log("[v0] Event generation finished:", result.object)
+
       if (result.object?.event) {
         const eventMessage: WizStateMessage = {
           characterId: "system",
@@ -95,7 +100,10 @@ export function WizInputForm(props: Props) {
   })
 
   const onSubmitChat = () => {
+    console.log("[v0] onSubmitChat called")
+
     if (chat.isLoading || event.isLoading) {
+      console.log("[v0] Already loading, skipping")
       return
     }
 
@@ -127,7 +135,10 @@ export function WizInputForm(props: Props) {
   }
 
   const onProceed = () => {
+    console.log("[v0] onProceed called")
+
     if (chat.isLoading || event.isLoading) {
+      console.log("[v0] Already loading, skipping")
       return
     }
 
@@ -172,9 +183,7 @@ export function WizInputForm(props: Props) {
   if (chat.object?.messages) {
     const validMessages = chat.object.messages.filter(
       (msg): msg is WizStateMessage =>
-        msg !== undefined &&
-        typeof msg.characterId === "string" &&
-        typeof msg.text === "string",
+        msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
     )
     displayMessages.push(...validMessages)
   }
@@ -185,23 +194,14 @@ export function WizInputForm(props: Props) {
       <div className="min-h-[200px] space-y-4">
         {displayMessages.map((message, index) => {
           const character =
-            message.characterId === "system"
-              ? undefined
-              : characterRepository.findOne(message.characterId)
+            message.characterId === "system" ? undefined : characterRepository.findOne(message.characterId)
 
-          const characterName =
-            message.characterId === "system"
-              ? undefined
-              : (character?.name ?? "???")
+          const characterName = message.characterId === "system" ? undefined : (character?.name ?? "???")
 
           return (
             <div key={`${message.characterId}-${index}`}>
               <div className="space-y-1">
-                {characterName && (
-                  <div className="font-mono text-primary text-sm">
-                    {characterName}
-                  </div>
-                )}
+                {characterName && <div className="font-mono text-primary text-sm">{characterName}</div>}
                 <div className="font-mono text-primary">{message.text}</div>
               </div>
             </div>
@@ -222,9 +222,7 @@ export function WizInputForm(props: Props) {
         <div className="flex gap-2">
           <Input
             value={props.inputValue}
-            onChange={(e) =>
-              props.dispatch({ type: "SET_INPUT", payload: e.target.value })
-            }
+            onChange={(e) => props.dispatch({ type: "SET_INPUT", payload: e.target.value })}
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                 onSubmitChat()

@@ -14,3 +14,4 @@ export type WizAction =
   | { type: "NEXT_CHAT" }
   | { type: "STOP" }
   | { type: "UNKNOWN" }
+  | { type: "BACK_TO_DUNGEON" }
