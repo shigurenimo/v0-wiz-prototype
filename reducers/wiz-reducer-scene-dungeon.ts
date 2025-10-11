@@ -1,12 +1,15 @@
-import { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
-import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
-import type { WizAction } from "@/engine/types"
 import type { WizStateEntity } from "@/engine/entities/wiz-state-entity"
+import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
+import { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
+import type { WizAction } from "@/engine/types"
 
 /**
  * wizReducerSceneDungeon
  */
-export function wizReducerSceneDungeon(state: WizStateSceneDungeonEntity, action: WizAction): WizStateEntity {
+export function wizReducerSceneDungeon(
+  state: WizStateSceneDungeonEntity,
+  action: WizAction,
+): WizStateEntity {
   if (action.type === "NEXT_MESSAGE") {
     return state.withNextMessage()
   }
@@ -17,7 +20,10 @@ export function wizReducerSceneDungeon(state: WizStateSceneDungeonEntity, action
 
   if (action.type === "SUBMIT_INPUT") {
     console.log(`発言: ${action.payload.playerInput}`)
-    return state.withIncrementedDepth().withInputValue("").withMessages(action.payload.messages)
+    return state
+      .withIncrementedDepth()
+      .withInputValue("")
+      .withMessages(action.payload.messages)
   }
 
   if (action.type === "ADD_CHAT_MESSAGES") {

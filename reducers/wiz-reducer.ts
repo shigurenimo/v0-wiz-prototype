@@ -8,7 +8,10 @@ import { wizReducerSceneSettings } from "./wiz-reducer-scene-settings"
 /**
  * wizReducer
  */
-export function wizReducer(state: WizStateEntity, action: WizAction): WizStateEntity {
+export function wizReducer(
+  state: WizStateEntity,
+  action: WizAction,
+): WizStateEntity {
   if (state instanceof WizStateSceneDungeonEntity) {
     return wizReducerSceneDungeon(state, action)
   }

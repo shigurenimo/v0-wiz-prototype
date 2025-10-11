@@ -4,4 +4,6 @@ import type { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-sc
 /**
  * Wiz State Entity Union
  */
-export type WizStateEntity = WizStateSceneDungeonEntity | WizStateSceneSettingsEntity
+export type WizStateEntity =
+  | WizStateSceneDungeonEntity
+  | WizStateSceneSettingsEntity

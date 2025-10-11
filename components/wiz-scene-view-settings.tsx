@@ -20,10 +20,16 @@ type Props = {
 export function WizSceneViewSettings(props: Props) {
   const [showFullKey, setShowFullKey] = useState(false)
 
-  const maskedKey = props.apiKey ? `${props.apiKey.slice(0, 8)}${"*".repeat(20)}${props.apiKey.slice(-4)}` : ""
+  const maskedKey = props.apiKey
+    ? `${props.apiKey.slice(0, 8)}${"*".repeat(20)}${props.apiKey.slice(-4)}`
+    : ""
 
   const handleDelete = () => {
-    if (window.confirm("APIキーを削除しますか？削除すると再度入力が必要になります。")) {
+    if (
+      window.confirm(
+        "APIキーを削除しますか？削除すると再度入力が必要になります。",
+      )
+    ) {
       props.onApiKeyDelete()
     }
   }
@@ -35,7 +41,9 @@ export function WizSceneViewSettings(props: Props) {
 
         <div className="space-y-4 rounded-lg border border-border bg-secondary p-6">
           <div className="space-y-2">
-            <label className="font-medium font-mono text-primary text-sm">Google AI APIキー</label>
+            <label className="font-medium font-mono text-primary text-sm">
+              Google AI APIキー
+            </label>
             <div className="flex gap-2">
               <Input
                 type={showFullKey ? "text" : "password"}
@@ -54,7 +62,12 @@ export function WizSceneViewSettings(props: Props) {
             </div>
           </div>
 
-          <Button onClick={handleDelete} variant="destructive" size="sm" className="font-mono">
+          <Button
+            onClick={handleDelete}
+            variant="destructive"
+            size="sm"
+            className="font-mono"
+          >
             APIキーを削除
           </Button>
         </div>

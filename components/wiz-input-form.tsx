@@ -9,7 +9,10 @@ import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import type { WizAction } from "@/engine/types"
-import { messageSchema, streamChatMessages } from "@/lib/ai/stream-chat-messages"
+import {
+  messageSchema,
+  streamChatMessages,
+} from "@/lib/ai/stream-chat-messages"
 import { eventSchema, streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
 
 type Props = {
@@ -27,6 +30,9 @@ export function WizInputForm(props: Props) {
   const [waitingForPartyResponse, setWaitingForPartyResponse] = useState(false)
   const [lastEventText, setLastEventText] = useState("")
   const [chatPlayerInput, setChatPlayerInput] = useState("")
+  const [_accumulatedMessages, _setAccumulatedMessages] = useState<
+    WizStateMessage[]
+  >([])
 
   // チャット用（プレイヤー入力への仲間の応答）
   const chat = useObject({
@@ -52,7 +58,9 @@ export function WizInputForm(props: Props) {
       if (result.object?.messages) {
         const validMessages = result.object.messages.filter(
           (msg): msg is WizStateMessage =>
-            msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
+            msg !== undefined &&
+            typeof msg.characterId === "string" &&
+            typeof msg.text === "string",
         )
         // 履歴に追加
         props.dispatch({
@@ -68,7 +76,10 @@ export function WizInputForm(props: Props) {
     api: "/api/event",
     schema: eventSchema,
     fetch: async () => {
-      console.log("[v0] Starting event generation at depth:", props.state.depth + 1)
+      console.log(
+        "[v0] Starting event generation at depth:",
+        props.state.depth + 1,
+      )
       console.log("[v0] API Key exists:", !!props.apiKey)
 
       const result = streamDungeonEvent({
@@ -113,6 +124,9 @@ export function WizInputForm(props: Props) {
       return
     }
 
+    // 蓄積メッセージをリセット
+    _setAccumulatedMessages([])
+
     // プレイヤー入力を履歴に追加
     const playerMessage: WizStateMessage = {
       characterId: props.state.vault.members[0].id,
@@ -142,6 +156,9 @@ export function WizInputForm(props: Props) {
       return
     }
 
+    // 蓄積メッセージをリセット
+    _setAccumulatedMessages([])
+
     // 深度を増やす
     props.dispatch({
       type: "SUBMIT_INPUT",
@@ -157,6 +174,9 @@ export function WizInputForm(props: Props) {
 
   const onPartyResponse = () => {
     setWaitingForPartyResponse(false)
+
+    // 蓄積メッセージをリセット
+    _setAccumulatedMessages([])
 
     // チャット入力を設定してから生成開始
     setChatPlayerInput(lastEventText)
@@ -179,29 +199,45 @@ export function WizInputForm(props: Props) {
     })
   }
 
-  // チャット生成中のメッセージを表示
+  // チャット生成中のメッセージを表示して蓄積
   if (chat.object?.messages) {
     const validMessages = chat.object.messages.filter(
       (msg): msg is WizStateMessage =>
-        msg !== undefined && typeof msg.characterId === "string" && typeof msg.text === "string",
+        msg !== undefined &&
+        typeof msg.characterId === "string" &&
+        typeof msg.text === "string",
     )
     displayMessages.push(...validMessages)
+
+    // 蓄積メッセージを更新
+    if (validMessages.length > _accumulatedMessages.length) {
+      _setAccumulatedMessages(validMessages)
+    }
   }
 
   return (
     <div className="space-y-4">
       {/* メッセージ表示エリア */}
-      <div className="min-h-[200px] space-y-4">
+      <div className="space-y-4">
         {displayMessages.map((message, index) => {
           const character =
-            message.characterId === "system" ? undefined : characterRepository.findOne(message.characterId)
+            message.characterId === "system"
+              ? undefined
+              : characterRepository.findOne(message.characterId)
 
-          const characterName = message.characterId === "system" ? undefined : (character?.name ?? "???")
+          const characterName =
+            message.characterId === "system"
+              ? undefined
+              : (character?.name ?? "???")
 
           return (
             <div key={`${message.characterId}-${index}`}>
               <div className="space-y-1">
-                {characterName && <div className="font-mono text-primary text-sm">{characterName}</div>}
+                {characterName && (
+                  <div className="font-mono text-primary text-sm">
+                    {characterName}
+                  </div>
+                )}
                 <div className="font-mono text-primary">{message.text}</div>
               </div>
             </div>
@@ -222,7 +258,9 @@ export function WizInputForm(props: Props) {
         <div className="flex gap-2">
           <Input
             value={props.inputValue}
-            onChange={(e) => props.dispatch({ type: "SET_INPUT", payload: e.target.value })}
+            onChange={(e) =>
+              props.dispatch({ type: "SET_INPUT", payload: e.target.value })
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                 onSubmitChat()

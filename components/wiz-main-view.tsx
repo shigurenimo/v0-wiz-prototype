@@ -24,7 +24,13 @@ export function WizMainView() {
   }
 
   if (state.type === "dungeon") {
-    return <WizSceneViewDungeon state={state} dispatch={dispatch} apiKey={apiKeyState.apiKey} />
+    return (
+      <WizSceneViewDungeon
+        state={state}
+        dispatch={dispatch}
+        apiKey={apiKeyState.apiKey}
+      />
+    )
   }
 
   if (state.type === "settings") {
