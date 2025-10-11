@@ -1,46 +1,58 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import type { GoogleGenerativeAIProvider } from "@ai-sdk/google"
 import { streamObject } from "ai"
 import { z } from "zod"
-import type { WizStateCharacter } from "@/engine/models/wiz-state-character"
 
-type Props = {
-  apiKey: string
-  currentDepth: number
-  partyMembers: WizStateCharacter[]
-}
-
-export const eventSchema = z.object({
-  event: z.object({
-    text: z.string(),
-  }),
+const responseSchema = z.object({
+  logs: z
+    .object({
+      type: z.enum(["chat", "event"]),
+      characterId: z.string(),
+      text: z.string(),
+    })
+    .array()
+    .min(0)
+    .max(2),
 })
 
+type Props = {
+  google: GoogleGenerativeAIProvider
+  partyInfo: string
+  currentDepth: number
+}
+
 /**
- * streamDungeonEvent
+ * generateEvent
  */
 export function streamDungeonEvent(props: Props) {
-  const google = createGoogleGenerativeAI({
-    apiKey: props.apiKey,
-  })
-
-  return streamObject({
-    model: google("gemini-2.0-flash-exp"),
-    schema: eventSchema,
+  const result = streamObject({
+    model: props.google("gemini-2.0-flash-exp"),
+    schema: responseSchema,
     system: `あなたはダンジョン探索RPGのナレーターです。
+
+パーティ構成:
+${props.partyInfo}
 
 現在の深度: ${props.currentDepth}
 
 重要な指示:
-- ダンジョン内で起こるランダムイベントを生成してください
-- イベントは2-3文程度の短い文章にしてください
-- モンスターとの遭遇、宝箱の発見、罠、環境の変化など、様々なイベントを生成してください
-- 深度が深いほど、危険度の高いイベントを生成してください
-- 戦闘は発生させないでください（会話のみ）`,
+- ダンジョン内で発生するイベントを生成してください
+- イベントは短く、臨場感のある描写にしてください
+- 深度に応じて危険度や雰囲気を調整してください
+- メタ的な発言は避けてください`,
     messages: [
       {
         role: "user",
-        content: `パーティが前に進みました。ランダムイベントを1つ生成してください。`,
+        content: `深度${props.currentDepth}で発生するイベントを生成してください。
+イベントの種類は以下のいずれかです：
+- 情景描写: ダンジョンの雰囲気や環境の変化
+- 遭遇: モンスターや罠との遭遇
+- 発見: アイテムや宝箱の発見
+
+1つのイベントを生成してください。
+logsには1つのオブジェクトを含めてください。type: "event", characterId: "system" を設定してください。`,
       },
     ],
   })
+
+  return result
 }

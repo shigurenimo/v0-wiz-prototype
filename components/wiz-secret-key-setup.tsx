@@ -27,8 +27,10 @@ export function WizSecretKeySetup(props: Props) {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="font-mono text-2xl text-primary">シークレットキーを入力</h1>
-          <p className="font-mono text-sm text-muted-foreground">
+          <h1 className="font-mono text-2xl text-primary">
+            シークレットキーを入力
+          </h1>
+          <p className="font-mono text-muted-foreground text-sm">
             ゲームにアクセスするためのシークレットキーを入力してください
           </p>
         </div>

@@ -4,9 +4,9 @@ import { useReducer } from "react"
 import { useSecretKey } from "@/hooks/use-secret-key"
 import { createWizState } from "@/lib/wiz-state"
 import { wizReducer } from "@/reducers/wiz-reducer"
-import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
 import { WizSceneViewSettings } from "./wiz-scene-view-settings"
+import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 
 export function WizMainView() {
   const [state, dispatch] = useReducer(wizReducer, createWizState())
@@ -20,11 +20,19 @@ export function WizMainView() {
   }
 
   if (!secretKeyState.secretKey) {
-    return <WizSecretKeySetup onSecretKeySet={secretKeyState.handleSecretKeySet} />
+    return (
+      <WizSecretKeySetup onSecretKeySet={secretKeyState.handleSecretKeySet} />
+    )
   }
 
   if (state.type === "dungeon") {
-    return <WizSceneViewDungeon state={state} dispatch={dispatch} secretKey={secretKeyState.secretKey} />
+    return (
+      <WizSceneViewDungeon
+        state={state}
+        dispatch={dispatch}
+        secretKey={secretKeyState.secretKey}
+      />
+    )
   }
 
   if (state.type === "settings") {
