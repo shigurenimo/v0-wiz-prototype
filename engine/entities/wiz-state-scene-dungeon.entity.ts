@@ -26,8 +26,20 @@ export class WizStateSceneDungeonEntity {
     return this.state.depth
   }
 
-  get unreadChatMessages() {
-    return this.state.unreadChatMessages
+  get chatMessages() {
+    return this.state.chatMessages
+  }
+
+  get currentMessageIndex() {
+    return this.state.currentMessageIndex
+  }
+
+  get currentMessage() {
+    return this.state.chatMessages[this.state.currentMessageIndex]
+  }
+
+  get hasUnreadMessages() {
+    return this.state.currentMessageIndex < this.state.chatMessages.length - 1
   }
 
   get narrativeSettings() {
@@ -71,29 +83,64 @@ export class WizStateSceneDungeonEntity {
   withMessages(messages: WizStateMessage[]): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      unreadChatMessages: [...this.state.unreadChatMessages, ...messages],
+      chatMessages: [...this.state.chatMessages, ...messages],
+      currentMessageIndex: this.state.chatMessages.length,
     })
   }
 
   /**
-   * チャットメッセージを置き換え
+   * 次のメッセージへ進む
    */
-  withReplacedMessages(
-    messages: WizStateMessage[],
-  ): WizStateSceneDungeonEntity {
+  withNextMessage(): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      unreadChatMessages: messages,
+      currentMessageIndex: Math.min(
+        this.state.currentMessageIndex + 1,
+        this.state.chatMessages.length - 1,
+      ),
     })
   }
 
   /**
-   * 次のチャットへ進む
+   * アイテムをインベントリに追加
    */
-  withNextChat(): WizStateSceneDungeonEntity {
+  withAddedItem(itemId: string): WizStateSceneDungeonEntity {
+    const existingItem = this.state.vault.inventory.find(
+      (item) => item.itemId === itemId,
+    )
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      unreadChatMessages: this.state.unreadChatMessages.slice(1),
+      vault: {
+        ...this.state.vault,
+        inventory: existingItem
+          ? this.state.vault.inventory.map((item) =>
+              item.itemId === itemId
+                ? { ...item, quantity: item.quantity + 1 }
+                : item,
+            )
+          : [...this.state.vault.inventory, { itemId: itemId, quantity: 1 }],
+      },
+    })
+  }
+
+  /**
+   * 最初のメンバーにダメージを与える
+   */
+  withDamageToFirstMember(damage: number): WizStateSceneDungeonEntity {
+    const newMembers = this.state.vault.members.map((member, index) => {
+      return index === 0
+        ? {
+            ...member,
+            hp: Math.max(0, member.hp - damage),
+          }
+        : member
+    })
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      vault: {
+        ...this.state.vault,
+        members: newMembers,
+      },
     })
   }
 }

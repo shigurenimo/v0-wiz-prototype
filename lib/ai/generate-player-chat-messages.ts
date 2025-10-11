@@ -19,7 +19,7 @@ export async function generatePlayerChatMessages(
     playerInput: props.playerInput,
     partyMembers: props.state.vault.members,
     currentDepth: props.state.depth + 1,
-    previousMessages: props.state.unreadChatMessages,
+    previousMessages: props.state.chatMessages,
   })
 
   return chatResult.messages

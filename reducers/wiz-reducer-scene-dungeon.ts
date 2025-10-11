@@ -9,7 +9,7 @@ export function wizReducerSceneDungeon(
   action: WizAction,
 ): WizStateSceneDungeonEntity {
   if (action.type === "NEXT_MESSAGE") {
-    return state.withNextChat()
+    return state.withNextMessage()
   }
 
   if (action.type === "SET_INPUT") {
@@ -21,7 +21,7 @@ export function wizReducerSceneDungeon(
     return state
       .withIncrementedDepth()
       .withInputValue("")
-      .withReplacedMessages(action.payload.messages)
+      .withMessages(action.payload.messages)
   }
 
   if (action.type === "ADD_CHAT_MESSAGES") {
@@ -29,7 +29,7 @@ export function wizReducerSceneDungeon(
   }
 
   if (action.type === "NEXT_CHAT") {
-    return state.withNextChat()
+    return state.withNextMessage()
   }
 
   if (action.type === "STOP") {

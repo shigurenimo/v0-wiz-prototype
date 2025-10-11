@@ -1,5 +1,5 @@
 import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
-import { WizStateInventoryItemEntity } from "@/engine/entities/wiz-state-inventory-item.entity"
+import { WizStateItemEntity } from "@/engine/entities/wiz-state-item.entity"
 import type { WizVault } from "@/engine/models/wiz-state-vault"
 
 /**
@@ -26,7 +26,7 @@ export class WizStateVaultEntity {
 
   get inventory() {
     return this.vault.inventory.map((item) => {
-      return new WizStateInventoryItemEntity(item)
+      return new WizStateItemEntity(item)
     })
   }
 }

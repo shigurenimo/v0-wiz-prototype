@@ -19,21 +19,10 @@ type Props = {
 export function WizSceneViewDungeon(props: Props) {
   const player = props.state.vault.members[0]
 
-  const hasUnreadMessages = props.state.unreadChatMessages.length > 1
-
-  const currentUnreadMessage = props.state.unreadChatMessages[0]
-
-  const member =
-    currentUnreadMessage === undefined
-      ? undefined
-      : props.state.vault.members.find(
-          (m) => m.characterId === currentUnreadMessage.characterId,
-        )
-
-  const characterName =
-    currentUnreadMessage?.characterId === "system"
-      ? undefined
-      : (member?.name ?? "???")
+  const displayedMessages = props.state.chatMessages.slice(
+    0,
+    props.state.currentMessageIndex + 1,
+  )
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">
@@ -49,14 +38,53 @@ export function WizSceneViewDungeon(props: Props) {
       </header>
 
       <div className="w-full max-w-2xl space-y-6">
-        {currentUnreadMessage && (
-          <TypewriterText
-            key={currentUnreadMessage.characterId + currentUnreadMessage.text}
-            text={currentUnreadMessage.text}
-            speed={50}
-            characterName={characterName}
-          />
-        )}
+        <div className="space-y-4 overflow-hidden">
+          {displayedMessages.map((message, index) => {
+            const member =
+              message.characterId === "system"
+                ? undefined
+                : props.state.vault.members.find(
+                    (m) => m.characterId === message.characterId,
+                  )
+
+            const characterName =
+              message.characterId === "system"
+                ? undefined
+                : (member?.name ?? "???")
+
+            const isCurrentMessage = index === props.state.currentMessageIndex
+
+            // 現在のメッセージからの距離でopacityを計算
+            const distanceFromCurrent = props.state.currentMessageIndex - index
+            const opacity = Math.max(0, 1 - distanceFromCurrent * 0.2)
+
+            // opacity 0のメッセージは表示しない
+            if (opacity === 0) {
+              return null
+            }
+
+            return (
+              <div key={`${message.characterId}-${index}`} style={{ opacity }}>
+                {isCurrentMessage ? (
+                  <TypewriterText
+                    text={message.text}
+                    speed={50}
+                    characterName={characterName}
+                  />
+                ) : (
+                  <div className="space-y-1">
+                    {characterName && (
+                      <div className="font-mono text-primary text-sm">
+                        {characterName}
+                      </div>
+                    )}
+                    <div className="font-mono text-primary">{message.text}</div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
 
         <div className="space-y-2">
           <WizInputForm
@@ -64,7 +92,7 @@ export function WizSceneViewDungeon(props: Props) {
             dispatch={props.dispatch}
             apiKey={props.apiKey}
             state={props.state.toObject()}
-            hasUnreadMessages={hasUnreadMessages}
+            hasUnreadMessages={props.state.hasUnreadMessages}
           />
 
           <div className="flex justify-start gap-2">

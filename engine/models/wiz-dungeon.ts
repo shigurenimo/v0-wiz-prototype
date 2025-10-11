@@ -42,6 +42,10 @@ export const zWizDungeon = z.object({
      */
     treasures: z.array(z.string()),
   }),
+  /**
+   * このダンジョンで取得可能なアイテムIDのリスト
+   */
+  availableItems: z.array(z.string()),
 })
 
 export type WizDungeon = z.infer<typeof zWizDungeon>

@@ -1,0 +1,53 @@
+{
+  "$schema": "items.schema.json",
+  "items": [
+    {
+      "id": "potion-hp-small",
+      "name": "小さな体力ポーション",
+      "description": "HPを20回復する",
+      "rarity": "common"
+    },
+    {
+      "id": "potion-hp-medium",
+      "name": "体力ポーション",
+      "description": "HPを50回復する",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "torch",
+      "name": "松明",
+      "description": "暗闇を照らす",
+      "rarity": "common"
+    },
+    {
+      "id": "rope",
+      "name": "ロープ",
+      "description": "10メートルの丈夫なロープ",
+      "rarity": "common"
+    },
+    {
+      "id": "gem-ruby",
+      "name": "ルビー",
+      "description": "赤く輝く宝石",
+      "rarity": "rare"
+    },
+    {
+      "id": "scroll-teleport",
+      "name": "転移の巻物",
+      "description": "町に戻ることができる",
+      "rarity": "epic"
+    },
+    {
+      "id": "sword-iron",
+      "name": "鉄の剣",
+      "description": "攻撃力+5",
+      "rarity": "common"
+    },
+    {
+      "id": "shield-wood",
+      "name": "木の盾",
+      "description": "防御力+3",
+      "rarity": "common"
+    }
+  ]
+}

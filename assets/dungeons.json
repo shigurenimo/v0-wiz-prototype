@@ -14,7 +14,16 @@
         "primaryElements": ["石造り", "水", "古代"],
         "enemies": ["スケルトン", "ゴースト", "ゾンビ"],
         "treasures": ["古びた宝箱", "石棺", "祭壇"]
-      }
+      },
+      "availableItems": [
+        "potion-hp-small",
+        "potion-hp-medium",
+        "torch",
+        "rope",
+        "gem-ruby",
+        "sword-iron",
+        "shield-wood"
+      ]
     },
     {
       "id": "dungeon-2",
@@ -29,7 +38,8 @@
         "primaryElements": ["魔法陣", "浮遊", "水晶"],
         "enemies": ["魔法使い", "エレメンタル", "ゴーレム"],
         "treasures": ["魔法の宝箱", "水晶", "魔導書"]
-      }
+      },
+      "availableItems": ["potion-hp-medium", "gem-ruby", "scroll-teleport"]
     }
   ]
 }

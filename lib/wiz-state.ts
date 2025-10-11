@@ -14,12 +14,13 @@ export function createWizState(): WizStateSceneDungeonEntity {
     dungeonId: "dungeon-1",
     inputValue: "",
     depth: 0,
-    unreadChatMessages: [
+    chatMessages: [
       {
         characterId: "system",
         text: "暗く湿った石の階段を降りていく。松明の光が揺れ、影が壁を這う。",
       },
     ],
+    currentMessageIndex: 0,
     narrativeSettings: {
       tone: "dark",
       perspective: "second-person",

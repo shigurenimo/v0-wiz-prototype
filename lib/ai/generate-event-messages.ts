@@ -1,3 +1,4 @@
+import type { WizDungeon } from "@/engine/models/wiz-dungeon"
 import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizEventGenerator } from "@/engine/modules/wiz-event-generator"
@@ -7,6 +8,13 @@ import { generateEventMessage } from "./generate-event-message"
 type Props = {
   apiKey: string
   state: WizStateSceneDungeon
+  dungeon: WizDungeon
+}
+
+export type EventResult = {
+  messages: WizStateMessage[]
+  itemId?: string
+  damage?: number
 }
 
 /**
@@ -14,17 +22,19 @@ type Props = {
  */
 export async function generateEventMessages(
   props: Props,
-): Promise<WizStateMessage[]> {
+): Promise<EventResult> {
   const messages: WizStateMessage[] = []
 
-  // 1. イベントの種類を生成
-  const eventGenerator = new WizEventGenerator()
-  const eventType = eventGenerator.generate()
+  // 1. イベントを生成
+  const eventGenerator = new WizEventGenerator({
+    availableItemIds: props.dungeon.availableItems,
+  })
+  const event = eventGenerator.generate()
 
   // 2. イベントメッセージを生成
   const eventMessage = await generateEventMessage({
     apiKey: props.apiKey,
-    eventType: eventType,
+    eventType: event.type,
     currentDepth: props.state.depth + 1,
   })
 
@@ -40,7 +50,7 @@ export async function generateEventMessages(
     partyMembers: props.state.vault.members,
     currentDepth: props.state.depth + 1,
     previousMessages: [
-      ...props.state.unreadChatMessages,
+      ...props.state.chatMessages,
       { characterId: "system", text: eventMessage },
     ],
   })
@@ -49,5 +59,9 @@ export async function generateEventMessages(
     messages.push(message)
   }
 
-  return messages
+  return {
+    messages: messages,
+    itemId: event.type === "ITEM" ? event.itemId : undefined,
+    damage: event.type === "DAMAGE" ? event.damage : undefined,
+  }
 }

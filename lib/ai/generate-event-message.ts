@@ -29,14 +29,13 @@ export async function generateEventMessage(props: Props): Promise<string> {
     model: anthropic("claude-sonnet-4-5"),
     prompt: `あなたはダンジョン探索RPGのナレーターです。
 
-現在の深度: ${props.currentDepth}
-
-イベント種類: ${props.eventType}
 ${eventTypePrompts[props.eventType]}
 
-要件:
-- 1-2文の短い描写にしてください
-- 深度が深いほど危険な内容にしてください
+重要な指示:
+- マークダウン記法（#、**など）を使用しないでください
+- 「深度」「レベル」などのゲーム用語を使用しないでください
+- 物語の中の出来事として自然な文章で書いてください
+- 1-2文の簡潔な描写にしてください
 - ${props.eventType === "DAMAGE" ? "具体的な攻撃方法や罠の種類を含めてください" : ""}
 - ${props.eventType === "ITEM" ? "具体的なアイテム名を含めてください" : ""}
 - ${props.eventType === "SCENERY" ? "雰囲気や環境の変化を描写してください" : ""}

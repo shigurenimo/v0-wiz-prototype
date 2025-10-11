@@ -5,7 +5,10 @@ export type WizAction =
   | { type: "SET_INPUT"; payload: string }
   | {
       type: "SUBMIT_INPUT"
-      payload: { playerInput: string; messages: WizStateMessage[] }
+      payload: {
+        playerInput: string
+        messages: WizStateMessage[]
+      }
     }
   | { type: "ADD_CHAT_MESSAGES"; payload: WizStateMessage[] }
   | { type: "NEXT_CHAT" }

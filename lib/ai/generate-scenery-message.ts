@@ -22,7 +22,7 @@ export async function generateSceneryMessage(props: Props) {
     },
   })
 
-  const partyInfo = props.state.vault.members
+  const _partyInfo = props.state.vault.members
     .map((member) => {
       return new WizStateCharacterEntity(member)
     })
@@ -31,7 +31,7 @@ export async function generateSceneryMessage(props: Props) {
     })
     .join("\n")
 
-  const messages = props.state.unreadChatMessages.map((message) => {
+  const messages = props.state.chatMessages.map((message) => {
     if (message.characterId === "system") {
       return {
         role: "assistant" as const,
@@ -57,32 +57,26 @@ export async function generateSceneryMessage(props: Props) {
     }),
     system: `あなたはダンジョン探索RPGのナレーターです。
 
-ダンジョン情報:
-- 名前: ${props.dungeon.name}
-- 説明: ${props.dungeon.description}
-- トーン: ${props.state.narrativeSettings.tone}
-- 視点: ${props.state.narrativeSettings.perspective}
-- 詳細レベル: ${props.state.narrativeSettings.detailLevel}
+ダンジョンの場所: ${props.dungeon.name}
+雰囲気: ${props.dungeon.description}
 
-環境設定:
-- 照明: ${props.dungeon.environment.lighting}
-- 雰囲気: ${props.dungeon.environment.atmosphere}
-- 温度: ${props.dungeon.environment.temperature}
+環境:
+${props.dungeon.environment.lighting}、${props.dungeon.environment.atmosphere}、${props.dungeon.environment.temperature}
 
 テーマ要素: ${props.dungeon.theme.primaryElements.join("、")}
 
-現在の状況:
-- 深度: ${props.state.depth}
-- パーティ状態:
-${partyInfo}
-
-トーンと視点の設定を守り、簡潔で臨場感のある描写を生成してください。`,
+重要な指示:
+- マークダウン記法（#、**など）を使用しないでください
+- 「深度」「レベル」などのゲーム用語を使用しないでください
+- 物語の中の描写として自然な文章で書いてください
+- 1〜2文の簡潔な描写にしてください
+- ${props.state.narrativeSettings.perspective}視点で書いてください`,
     messages: [
       ...messages,
       {
         role: "user",
         content:
-          "上記の設定とこれまでのイベントログに基づいて、ダンジョン内の雰囲気や情景を1〜2文で描写してください。",
+          "これまでの出来事を踏まえて、今いる場所の雰囲気や情景を描写してください。",
       },
     ],
   })
