@@ -17,7 +17,7 @@ $ bun i
 $ bun run dev
 \`\`\`
 
-```
+\`\`\`
 SECRET_KEY="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 GOOGLE_GENERATIVE_AI_API_KEY=""
-```
+\`\`\`
