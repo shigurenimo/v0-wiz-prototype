@@ -11,7 +11,7 @@ export function WizMainView() {
   const [state, dispatch] = useReducer(wizReducer, createWizState())
 
   const apiKeyState = useApiKey({
-    storageKey: "wiz.key.claude",
+    storageKey: "wiz.key.google",
   })
 
   if (apiKeyState.isLoading) {

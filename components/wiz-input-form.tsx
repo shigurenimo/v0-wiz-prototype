@@ -1,144 +1,101 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
+import { experimental_useObject as useObject } from "@ai-sdk/react"
 import type { Dispatch } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
-import { DungeonRepository } from "@/engine/repositories/dungeon-repository"
+import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import type { WizAction } from "@/engine/types"
-import { generateEventMessages } from "@/lib/ai/generate-event-messages"
-import { generatePlayerChatMessages } from "@/lib/ai/generate-player-chat-messages"
+import {
+  messageSchema,
+  streamChatMessages,
+} from "@/lib/ai/stream-chat-messages"
+import { eventSchema, streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
 
 type Props = {
   inputValue: string
   dispatch: Dispatch<WizAction>
   apiKey: string
   state: WizStateSceneDungeon
-  hasUnreadMessages: boolean
 }
 
 /**
  * WizInputForm
  */
 export function WizInputForm(props: Props) {
-  const dungeonRepository = new DungeonRepository()
+  const characterRepository = new WizCharacterRepository()
+  const [waitingForPartyResponse, setWaitingForPartyResponse] = useState(false)
+  const [lastEventText, setLastEventText] = useState("")
+  const [chatPlayerInput, setChatPlayerInput] = useState("")
 
-  // 2つ目: イベントとそれに対する会話を生成
-  const eventMutation = useMutation({
-    mutationFn: async (variables: {
-      apiKey: string
-      state: WizStateSceneDungeon
-    }) => {
-      const dungeon = dungeonRepository.findOne(variables.state.dungeonId)
-      if (!dungeon) {
-        return undefined
-      }
-
-      return await generateEventMessages({
-        apiKey: variables.apiKey,
-        state: variables.state,
-        dungeon: dungeon,
+  // チャット用（プレイヤー入力への仲間の応答）
+  const chat = useObject({
+    api: "/api/chat",
+    schema: messageSchema,
+    fetch: async () => {
+      const result = streamChatMessages({
+        apiKey: props.apiKey,
+        playerInput: chatPlayerInput,
+        partyMembers: props.state.vault.members,
+        currentDepth: props.state.depth,
+        previousMessages: props.state.chatMessages,
       })
+
+      return result.toTextStreamResponse()
     },
-    onSuccess(eventResult) {
-      if (!eventResult) {
-        return
+    onFinish: (result) => {
+      if (result.object?.messages) {
+        const validMessages = result.object.messages.filter(
+          (msg): msg is WizStateMessage =>
+            msg !== undefined &&
+            typeof msg.characterId === "string" &&
+            typeof msg.text === "string",
+        )
+        // 履歴に追加
+        props.dispatch({
+          type: "ADD_CHAT_MESSAGES",
+          payload: validMessages,
+        })
       }
-
-      let newState = props.state
-      const messages = eventResult.messages
-
-      // イベント結果を適用
-      if (eventResult.itemId) {
-        newState = {
-          ...newState,
-          vault: {
-            ...newState.vault,
-            inventory: newState.vault.inventory.find(
-              (item) => item.itemId === eventResult.itemId,
-            )
-              ? newState.vault.inventory.map((item) =>
-                  item.itemId === eventResult.itemId
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item,
-                )
-              : [
-                  ...newState.vault.inventory,
-                  { itemId: eventResult.itemId, quantity: 1 },
-                ],
-          },
-        }
-      }
-
-      if (eventResult.damage) {
-        newState = {
-          ...newState,
-          vault: {
-            ...newState.vault,
-            members: newState.vault.members.map((member, index) =>
-              index === 0
-                ? {
-                    ...member,
-                    hp: Math.max(0, member.hp - eventResult.damage!),
-                  }
-                : member,
-            ),
-          },
-        }
-      }
-
-      // メッセージを追加
-      props.dispatch({
-        type: "ADD_CHAT_MESSAGES",
-        payload: messages,
-      })
     },
   })
 
-  // 1つ目: プレイヤーの発言に対する会話を生成
-  const playerMutation = useMutation({
-    mutationFn: async (variables: {
-      apiKey: string
-      playerInput: string
-      state: WizStateSceneDungeon
-    }) => {
-      return await generatePlayerChatMessages(variables)
+  // イベント用（「進む」で発生）
+  const event = useObject({
+    api: "/api/event",
+    schema: eventSchema,
+    fetch: async () => {
+      const result = streamDungeonEvent({
+        apiKey: props.apiKey,
+        currentDepth: props.state.depth + 1,
+        partyMembers: props.state.vault.members,
+      })
+
+      return result.toTextStreamResponse()
     },
-    onSuccess(messages, variables) {
-      // まず深度を進めてプレイヤーの会話を追加
-      props.dispatch({
-        type: "SUBMIT_INPUT",
-        payload: {
-          playerInput: variables.playerInput,
-          messages: messages,
-        },
-      })
-
-      // イベント生成用に現在のstateを取得（深度+1、メッセージ追加後）
-      const newState: WizStateSceneDungeon = {
-        ...variables.state,
-        depth: variables.state.depth + 1,
-        chatMessages: [...variables.state.chatMessages, ...messages],
-        currentMessageIndex: variables.state.chatMessages.length,
+    onFinish: (result) => {
+      if (result.object?.event) {
+        const eventMessage: WizStateMessage = {
+          characterId: "system",
+          text: result.object.event.text,
+        }
+        // 履歴に追加
+        props.dispatch({
+          type: "ADD_CHAT_MESSAGES",
+          payload: [eventMessage],
+        })
+        // イベントテキストを保存して、仲間の応答待ちに
+        setLastEventText(result.object.event.text)
+        setWaitingForPartyResponse(true)
       }
-
-      // その後、イベント生成を開始
-      eventMutation.mutate({
-        apiKey: variables.apiKey,
-        state: newState,
-      })
     },
   })
 
-  const onSubmit = () => {
-    // イベント生成中は「次へ」も発言もブロック
-    if (eventMutation.isPending) {
-      return
-    }
-
-    if (props.hasUnreadMessages) {
-      props.dispatch({ type: "NEXT_CHAT" })
+  const onSubmitChat = () => {
+    if (chat.isLoading || event.isLoading) {
       return
     }
 
@@ -148,51 +105,153 @@ export function WizInputForm(props: Props) {
       return
     }
 
-    playerMutation.mutate({
-      apiKey: props.apiKey,
-      playerInput: playerInput,
-      state: props.state,
+    // プレイヤー入力を履歴に追加
+    const playerMessage: WizStateMessage = {
+      characterId: props.state.vault.members[0].id,
+      text: playerInput,
+    }
+
+    props.dispatch({
+      type: "SUBMIT_INPUT",
+      payload: {
+        playerInput: playerInput,
+        messages: [playerMessage],
+      },
+    })
+
+    // チャット入力を設定してから生成開始
+    setChatPlayerInput(playerInput)
+
+    // ストリーミング生成を開始
+    chat.submit({})
+  }
+
+  const onProceed = () => {
+    if (chat.isLoading || event.isLoading) {
+      return
+    }
+
+    // 深度を増やす
+    props.dispatch({
+      type: "SUBMIT_INPUT",
+      payload: {
+        playerInput: "",
+        messages: [],
+      },
+    })
+
+    // イベント生成を開始
+    event.submit({})
+  }
+
+  const onPartyResponse = () => {
+    setWaitingForPartyResponse(false)
+
+    // チャット入力を設定してから生成開始
+    setChatPlayerInput(lastEventText)
+    setLastEventText("")
+
+    // イベントに対する仲間の応答を生成
+    chat.submit({})
+  }
+
+  const isLoading = chat.isLoading || event.isLoading
+
+  // 表示用のメッセージリスト
+  const displayMessages: WizStateMessage[] = []
+
+  // イベント生成中
+  if (event.object?.event?.text) {
+    displayMessages.push({
+      characterId: "system",
+      text: event.object.event.text,
     })
   }
 
-  // プレイヤー発言とイベント生成の両方が完了するまでローディング
-  const isLoading = playerMutation.isPending || eventMutation.isPending
+  // チャット生成中のメッセージを表示
+  if (chat.object?.messages) {
+    const validMessages = chat.object.messages.filter(
+      (msg): msg is WizStateMessage =>
+        msg !== undefined &&
+        typeof msg.characterId === "string" &&
+        typeof msg.text === "string",
+    )
+    displayMessages.push(...validMessages)
+  }
 
   return (
-    <div className="flex gap-2">
-      {!props.hasUnreadMessages && (
-        <Input
-          value={props.inputValue}
-          onChange={(e) =>
-            props.dispatch({ type: "SET_INPUT", payload: e.target.value })
-          }
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-              onSubmit()
+    <div className="space-y-4">
+      {/* メッセージ表示エリア */}
+      <div className="min-h-[200px] space-y-4">
+        {displayMessages.map((message, index) => {
+          const character =
+            message.characterId === "system"
+              ? undefined
+              : characterRepository.findOne(message.characterId)
+
+          const characterName =
+            message.characterId === "system"
+              ? undefined
+              : (character?.name ?? "???")
+
+          return (
+            <div key={`${message.characterId}-${index}`}>
+              <div className="space-y-1">
+                {characterName && (
+                  <div className="font-mono text-primary text-sm">
+                    {characterName}
+                  </div>
+                )}
+                <div className="font-mono text-primary">{message.text}</div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 入力エリア */}
+      {waitingForPartyResponse ? (
+        <Button
+          onClick={onPartyResponse}
+          variant="outline"
+          className="w-full border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
+        >
+          次へ
+        </Button>
+      ) : (
+        <div className="flex gap-2">
+          <Input
+            value={props.inputValue}
+            onChange={(e) =>
+              props.dispatch({ type: "SET_INPUT", payload: e.target.value })
             }
-          }}
-          placeholder="発言や行動を入力（例: つかれた？ / 疲れているふりをする / すすむ）"
-          className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
-          disabled={isLoading}
-        />
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                onSubmitChat()
+              }
+            }}
+            placeholder="発言や行動を入力（例: つかれた？ / 疲れているふりをする）"
+            className="flex-1 border-border bg-secondary font-mono text-base text-primary placeholder:text-muted-foreground"
+            disabled={isLoading}
+          />
+          <Button
+            onClick={onSubmitChat}
+            variant="outline"
+            className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
+            disabled={isLoading || props.inputValue.trim() === ""}
+          >
+            {isLoading ? "生成中..." : "実行"}
+          </Button>
+          <Button
+            onClick={onProceed}
+            variant="outline"
+            className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
+            disabled={isLoading}
+          >
+            進む
+          </Button>
+        </div>
       )}
-      <Button
-        onClick={onSubmit}
-        variant="outline"
-        className={`border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary ${props.hasUnreadMessages ? "w-full" : ""}`}
-        disabled={
-          isLoading ||
-          (!props.hasUnreadMessages && props.inputValue.trim() === "")
-        }
-      >
-        {eventMutation.isPending
-          ? "イベント生成中..."
-          : playerMutation.isPending
-            ? "生成中..."
-            : props.hasUnreadMessages
-              ? "次へ"
-              : "実行"}
-      </Button>
     </div>
   )
 }
