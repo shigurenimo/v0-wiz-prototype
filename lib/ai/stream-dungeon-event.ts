@@ -1,6 +1,7 @@
 import type { GoogleGenerativeAIProvider } from "@ai-sdk/google"
 import { streamObject } from "ai"
 import { z } from "zod"
+import { WizEventGenerator } from "@/engine/modules/wiz-event-generator"
 
 const responseSchema = z.object({
   logs: z
@@ -18,12 +19,28 @@ type Props = {
   google: GoogleGenerativeAIProvider
   partyInfo: string
   currentDepth: number
+  availableItemIds: string[]
 }
 
 /**
  * generateEvent
  */
 export function streamDungeonEvent(props: Props) {
+  const eventGenerator = new WizEventGenerator({
+    availableItemIds: props.availableItemIds,
+  })
+  const event = eventGenerator.generate()
+
+  const getEventDescription = () => {
+    if (event.type === "SCENERY") {
+      return "情景描写: ダンジョンの雰囲気や環境の変化を描写してください"
+    }
+    if (event.type === "DAMAGE") {
+      return `罠の遭遇: パーティが罠に遭遇しました。${event.damage}のダメージを受けます。この状況を臨場感を持って描写してください`
+    }
+    return `アイテムの発見: パーティがアイテム（ID: ${event.itemId}）を発見しました。この発見の様子を描写してください`
+  }
+
   const result = streamObject({
     model: props.google("gemini-2.0-flash-exp"),
     schema: responseSchema,
@@ -35,20 +52,17 @@ ${props.partyInfo}
 現在の深度: ${props.currentDepth}
 
 重要な指示:
-- ダンジョン内で発生するイベントを生成してください
+- 与えられたイベントに基づいて、臨場感のある文章を生成してください
 - イベントは短く、臨場感のある描写にしてください
 - 深度に応じて危険度や雰囲気を調整してください
 - メタ的な発言は避けてください`,
     messages: [
       {
         role: "user",
-        content: `深度${props.currentDepth}で発生するイベントを生成してください。
-イベントの種類は以下のいずれかです：
-- 情景描写: ダンジョンの雰囲気や環境の変化
-- 遭遇: モンスターや罠との遭遇
-- 発見: アイテムや宝箱の発見
+        content: `深度${props.currentDepth}で以下のイベントが発生しました。
+${getEventDescription()}
 
-1つのイベントを生成してください。
+1つのイベント文章を生成してください。
 logsには1つのオブジェクトを含めてください。type: "event", characterId: "system" を設定してください。`,
       },
     ],

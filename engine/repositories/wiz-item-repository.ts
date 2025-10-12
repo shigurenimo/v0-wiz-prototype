@@ -12,21 +12,17 @@ export class WizItemRepository {
     Object.freeze(this)
   }
 
-  private get records() {
-    return zJson.parse(json).items
-  }
-
   /**
    * Find many items
    */
-  findMany(): readonly WizItem[] {
-    return this.records
+  async findMany(): Promise<readonly WizItem[]> {
+    return zJson.parse(json).items
   }
 
   /**
    * Find one item by ID
    */
-  findOne(id: string): WizItem | undefined {
-    return this.records.find((record) => record.id === id)
+  async findOne(id: string): Promise<WizItem | undefined> {
+    return zJson.parse(json).items.find((item) => item.id === id)
   }
 }

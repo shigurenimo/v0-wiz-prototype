@@ -6,27 +6,28 @@ import { zWizCharacter } from "@/engine/models/wiz-character"
  * Character Repository
  */
 export class WizCharacterRepository {
-  private readonly items: readonly WizCharacterEntity[]
-
-  constructor() {
-    this.items = zWizCharacter
+  private get records() {
+    return zWizCharacter
       .array()
       .parse(charactersData.items)
       .map((data) => new WizCharacterEntity(data))
+  }
+
+  constructor() {
     Object.freeze(this)
   }
 
   /**
    * Find many characters
    */
-  findMany(): readonly WizCharacterEntity[] {
-    return this.items
+  async findMany(): Promise<readonly WizCharacterEntity[]> {
+    return this.records
   }
 
   /**
    * Find one character by ID
    */
-  findOne(id: string): WizCharacterEntity | undefined {
-    return this.items.find((character) => character.id === id)
+  async findOne(id: string): Promise<WizCharacterEntity | undefined> {
+    return this.records.find((character) => character.id === id)
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useReducer } from "react"
+import { use, useReducer } from "react"
 import { useSecretKey } from "@/hooks/use-secret-key"
 import { createWizState } from "@/lib/wiz-state"
 import { wizReducer } from "@/reducers/wiz-reducer"
@@ -9,7 +9,7 @@ import { WizSceneViewSettings } from "./wiz-scene-view-settings"
 import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 
 export function WizMainView() {
-  const [state, dispatch] = useReducer(wizReducer, createWizState())
+  const [state, dispatch] = useReducer(wizReducer, use(createWizState()))
 
   const secretKeyState = useSecretKey({
     storageKey: "wiz.secret.key",
@@ -44,10 +44,6 @@ export function WizMainView() {
         onSecretKeyDelete={secretKeyState.handleSecretKeyDelete}
       />
     )
-  }
-
-  if (state.type === "storage") {
-    return <div>Storage Scene</div>
   }
 
   return null

@@ -1,8 +1,8 @@
 import type { GoogleGenerativeAIProvider } from "@ai-sdk/google"
 import { streamObject } from "ai"
 import { z } from "zod"
+import type { WizCharacterEntity } from "@/engine/entities/wiz-character.entity"
 import type { WizStateMessage } from "@/engine/models/wiz-state-message"
-import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 
 const responseSchema = z.object({
   logs: z
@@ -22,20 +22,21 @@ type Props = {
   currentDepth: number
   chatMessages: WizStateMessage[]
   playerInput: string
+  characters: readonly WizCharacterEntity[]
 }
 
 /**
  * generateChat
  */
 export function streamDungeonChat(props: Props) {
-  const characterRepository = new WizCharacterRepository()
-
   const conversationHistory = props.chatMessages
     .map((message) => {
       if (message.characterId === "system") {
         return `[ナレーション] ${message.text}`
       }
-      const character = characterRepository.findOne(message.characterId)
+      const character = props.characters.find(
+        (c) => c.id === message.characterId,
+      )
       return `${character?.name}: ${message.text}`
     })
     .join("\n")

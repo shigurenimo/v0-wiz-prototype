@@ -1,3 +1,4 @@
+import { use } from "react"
 import type { WizStateEntity } from "@/engine/entities/wiz-state-entity"
 import type { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
 import type { WizAction } from "@/engine/types"
@@ -11,7 +12,7 @@ export function wizReducerSceneSettings(
   action: WizAction,
 ): WizStateEntity {
   if (action.type === "BACK_TO_DUNGEON") {
-    return createWizState()
+    return use(createWizState())
   }
 
   return state

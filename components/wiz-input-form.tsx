@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
-import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import type { WizAction } from "@/engine/types"
 
 const responseSchema = z.object({
@@ -33,8 +32,6 @@ type Props = {
  * WizInputForm
  */
 export function WizInputForm(props: Props) {
-  const characterRepository = new WizCharacterRepository()
-
   const api = useObject({
     api: "/api/chat",
     schema: responseSchema,
@@ -135,7 +132,9 @@ export function WizInputForm(props: Props) {
           const character =
             message.characterId === "system"
               ? undefined
-              : characterRepository.findOne(message.characterId)
+              : props.state.vault.members.find(
+                  (m) => m.id === message.characterId,
+                )
 
           const characterName =
             message.characterId === "system"

@@ -6,8 +6,10 @@ import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repo
 /**
  * Create initial Wiz state
  */
-export function createWizState(): WizStateSceneDungeonEntity {
+export async function createWizState(): Promise<WizStateSceneDungeonEntity> {
   const characterRepository = new WizCharacterRepository()
+
+  const characters = await characterRepository.findMany()
 
   const plainState: WizStateSceneDungeon = {
     type: "dungeon",
@@ -29,7 +31,7 @@ export function createWizState(): WizStateSceneDungeonEntity {
     vault: {
       id: "vault-1",
       playerName: "あなた",
-      members: characterRepository.findMany().map((characterEntity) => {
+      members: characters.map((characterEntity) => {
         const tempMember = new WizStateCharacterEntity({
           id: characterEntity.id,
           name: characterEntity.name,

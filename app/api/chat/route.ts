@@ -3,6 +3,7 @@ import { z } from "zod"
 import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
 import { zWizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
+import { WizItemRepository } from "@/engine/repositories/wiz-item-repository"
 import { streamDungeonChat } from "@/lib/ai/stream-dungeon-chat"
 import { streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
 
@@ -53,6 +54,10 @@ export async function POST(request: Request) {
   }
 
   const characterRepository = new WizCharacterRepository()
+  const itemRepository = new WizItemRepository()
+
+  const characters = await characterRepository.findMany()
+  const items = await itemRepository.findMany()
 
   const google = createGoogleGenerativeAI({
     apiKey: apiKey,
@@ -60,17 +65,20 @@ export async function POST(request: Request) {
 
   const partyInfo = body.state.vault.members
     .map((memberState) => {
-      const character = characterRepository.findOne(memberState.id)
+      const character = characters.find((c) => c.id === memberState.id)
       const entity = new WizStateCharacterEntity(memberState)
       return `- ${character?.name} (ID: ${character?.id}): HP ${entity.hp}/${entity.maxHp}, STR ${entity.strength}, DEX ${entity.dexterity}, INT ${entity.intelligence}`
     })
     .join("\n")
 
   if (body.type === "event") {
+    const availableItemIds = items.map((item) => item.id)
+
     const result = streamDungeonEvent({
       google: google,
       partyInfo: partyInfo,
       currentDepth: body.state.depth,
+      availableItemIds: availableItemIds,
     })
 
     return result.toTextStreamResponse()
@@ -82,6 +90,7 @@ export async function POST(request: Request) {
     currentDepth: body.state.depth,
     chatMessages: body.state.chatMessages,
     playerInput: body.playerInput,
+    characters: characters,
   })
 
   return result.toTextStreamResponse()

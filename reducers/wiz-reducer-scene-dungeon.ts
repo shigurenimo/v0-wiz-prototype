@@ -37,6 +37,8 @@ export function wizReducerSceneDungeon(
   if (action.type === "STOP") {
     return new WizStateSceneSettingsEntity({
       type: "settings",
+      vault: state.vault,
+      narrativeSettings: state.narrativeSettings,
     })
   }
 
