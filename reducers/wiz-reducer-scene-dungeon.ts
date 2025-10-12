@@ -27,7 +27,26 @@ export function wizReducerSceneDungeon(
   }
 
   if (action.type === "ADD_CHAT_MESSAGES") {
-    return state.withMessages(action.payload)
+    const newState = state.withMessages(action.payload)
+    if (state.combatState) {
+      return newState.withIncrementedCombatChat()
+    }
+    return newState
+  }
+
+  if (action.type === "START_COMBAT") {
+    return state.withCombatState({
+      enemyName: action.payload.enemyName,
+      chatCount: 0,
+    })
+  }
+
+  if (action.type === "INCREMENT_COMBAT_CHAT") {
+    return state.withIncrementedCombatChat()
+  }
+
+  if (action.type === "END_COMBAT") {
+    return state.withoutCombatState()
   }
 
   if (action.type === "NEXT_CHAT") {

@@ -50,6 +50,10 @@ export class WizStateSceneDungeonEntity {
     return new WizStateVaultEntity(this.state.vault)
   }
 
+  get combatState() {
+    return this.state.combatState
+  }
+
   /**
    * Convert to plain object
    */
@@ -141,6 +145,45 @@ export class WizStateSceneDungeonEntity {
         ...this.state.vault,
         members: newMembers,
       },
+    })
+  }
+
+  /**
+   * 戦闘状態を設定
+   */
+  withCombatState(combatState: {
+    enemyName: string
+    chatCount: number
+  }): WizStateSceneDungeonEntity {
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      combatState: combatState,
+    })
+  }
+
+  /**
+   * 戦闘中のチャット回数を増やす
+   */
+  withIncrementedCombatChat(): WizStateSceneDungeonEntity {
+    if (!this.state.combatState) {
+      return this
+    }
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      combatState: {
+        ...this.state.combatState,
+        chatCount: this.state.combatState.chatCount + 1,
+      },
+    })
+  }
+
+  /**
+   * 戦闘状態を解除
+   */
+  withoutCombatState(): WizStateSceneDungeonEntity {
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      combatState: null,
     })
   }
 }

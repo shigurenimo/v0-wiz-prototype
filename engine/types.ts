@@ -11,6 +11,9 @@ export type WizAction =
       }
     }
   | { type: "ADD_CHAT_MESSAGES"; payload: WizStateMessage[] }
+  | { type: "START_COMBAT"; payload: { enemyName: string } }
+  | { type: "INCREMENT_COMBAT_CHAT" }
+  | { type: "END_COMBAT" }
   | { type: "NEXT_CHAT" }
   | { type: "STOP" }
   | { type: "UNKNOWN" }

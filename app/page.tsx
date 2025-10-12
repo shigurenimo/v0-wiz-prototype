@@ -1,6 +1,7 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Suspense } from "react"
 import { WizMainView } from "@/components/wiz-main-view"
 import { useClientLoading } from "@/hooks/use-client-loading"
 
@@ -15,7 +16,9 @@ export default function Home() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WizMainView />
+      <Suspense fallback={null}>
+        <WizMainView />
+      </Suspense>
     </QueryClientProvider>
   )
 }

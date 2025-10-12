@@ -4,7 +4,7 @@ import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dunge
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 
 /**
- * Create initial Wiz state
+ * Create initial Wiz state internal
  */
 export async function createWizState(): Promise<WizStateSceneDungeonEntity> {
   const characterRepository = new WizCharacterRepository()
@@ -23,6 +23,7 @@ export async function createWizState(): Promise<WizStateSceneDungeonEntity> {
       },
     ],
     currentMessageIndex: 0,
+    combatState: null,
     narrativeSettings: {
       tone: "dark",
       perspective: "second-person",

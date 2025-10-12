@@ -13,6 +13,14 @@ const responseSchema = z.object({
     .array()
     .min(0)
     .max(2),
+  event: z
+    .object({
+      type: z.enum(["SCENERY", "DAMAGE", "ITEM", "COMBAT"]),
+      enemyName: z.string().optional(),
+      damage: z.number().optional(),
+      itemId: z.string().optional(),
+    })
+    .optional(),
 })
 
 type Props = {
@@ -37,6 +45,9 @@ export function streamDungeonEvent(props: Props) {
     }
     if (event.type === "DAMAGE") {
       return `罠の遭遇: パーティが罠に遭遇しました。${event.damage}のダメージを受けます。この状況を臨場感を持って描写してください`
+    }
+    if (event.type === "COMBAT") {
+      return `戦闘: ${event.enemyName}が現れました！この緊迫した遭遇を臨場感を持って描写してください`
     }
     return `アイテムの発見: パーティがアイテム（ID: ${event.itemId}）を発見しました。この発見の様子を描写してください`
   }

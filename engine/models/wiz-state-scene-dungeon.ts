@@ -12,6 +12,12 @@ export const zWizStateSceneDungeon = zWizStateCore.extend({
   depth: z.number().int().min(0),
   chatMessages: z.array(zWizStateMessage),
   currentMessageIndex: z.number().int().min(0),
+  combatState: z
+    .object({
+      enemyName: z.string(),
+      chatCount: z.number().int().min(0),
+    })
+    .nullable(),
 })
 
 export type WizStateSceneDungeon = z.infer<typeof zWizStateSceneDungeon>
