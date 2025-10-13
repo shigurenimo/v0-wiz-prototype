@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { WizChatMessage } from "@/components/wiz-chat-message"
 import { WizDungeonHeader } from "@/components/wiz-dungeon-header"
-import { WizPixelArt } from "@/components/wiz-pixel-art-animation"
+import { WizPixelAnimation } from "@/components/wiz-pixel-animation"
 import type { WizStateSceneDungeonBattleEntity } from "@/engine/entities/wiz-state-scene-dungeon-battle.entity"
+import type { WizMaster } from "@/engine/models/wiz-master"
 import type { WizAction } from "@/engine/types"
 import { zStreamResult } from "@/lib/ai/models"
 import { useAnimationFrame } from "@/lib/use-animation-frame"
 
 type Props = {
+  master: WizMaster
   state: WizStateSceneDungeonBattleEntity
   dispatch: Dispatch<WizAction>
   secretKey: string
@@ -51,6 +53,7 @@ export function WizSceneViewDungeonBattle(props: Props) {
 
   const onSubmitChat = (playerInput: string) => {
     if (api.isLoading) return
+
     if (props.state.chatCount >= 2) return
 
     const playerMessage = {
@@ -89,8 +92,8 @@ export function WizSceneViewDungeonBattle(props: Props) {
 
       <div className="fixed top-0 right-0 left-0 flex items-center justify-center pt-40">
         <div className="flex gap-x-8">
-          <WizPixelArt frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
-          <WizPixelArt frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
+          <WizPixelAnimation frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
+          <WizPixelAnimation frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
         </div>
       </div>
 

@@ -1,16 +1,12 @@
 import charactersData from "@/assets/characters.json"
-import { WizCharacterEntity } from "@/engine/entities/wiz-character.entity"
-import { zWizCharacter } from "@/engine/models/wiz-character"
+import { type WizCharacter, zWizCharacter } from "@/engine/models/wiz-character"
 
 /**
  * Character Repository
  */
 export class WizCharacterRepository {
   private get records() {
-    return zWizCharacter
-      .array()
-      .parse(charactersData.items)
-      .map((data) => new WizCharacterEntity(data))
+    return zWizCharacter.array().parse(charactersData.items)
   }
 
   constructor() {
@@ -20,14 +16,14 @@ export class WizCharacterRepository {
   /**
    * Find many characters
    */
-  async findMany(): Promise<readonly WizCharacterEntity[]> {
+  async findMany(): Promise<readonly WizCharacter[]> {
     return this.records
   }
 
   /**
    * Find one character by ID
    */
-  async findOne(id: string): Promise<WizCharacterEntity | undefined> {
+  async findOne(id: string): Promise<WizCharacter | undefined> {
     return this.records.find((character) => character.id === id)
   }
 }

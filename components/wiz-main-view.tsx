@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { use, useEffect, useReducer } from "react"
+import { WizMasterRepository } from "@/engine/repositories/wiz-master-repository"
 import { useSecretKey } from "@/hooks/use-secret-key"
 import { wizState } from "@/lib/debug/wiz-state-sakura"
 import { wizReducer } from "@/reducers/wiz-reducer"
@@ -9,8 +10,18 @@ import { WizScene } from "./wiz-scene"
 import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 
 export function WizMainView() {
+  const masterRepository = new WizMasterRepository()
+
+  const masterQuery = useQuery({
+    queryKey: ["wiz-master"],
+    queryFn: () => masterRepository.findAll(),
+    experimental_prefetchInRender: true,
+  })
+
+  const master = use(masterQuery.promise)
+
   const stateQuery = useQuery({
-    queryKey: ["wizState"],
+    queryKey: ["wiz-state"],
     queryFn: wizState,
     experimental_prefetchInRender: true,
   })
@@ -57,6 +68,7 @@ export function WizMainView() {
 
   return (
     <WizScene
+      master={master}
       state={state}
       dispatch={dispatch}
       onSecretKeyDelete={handleSecretKeyDelete}

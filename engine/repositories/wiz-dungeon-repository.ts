@@ -4,7 +4,7 @@ import { type WizDungeon, zWizDungeon } from "@/engine/models/wiz-dungeon"
 /**
  * Dungeon Repository
  */
-export class DungeonRepository {
+export class WizDungeonRepository {
   private readonly items: readonly WizDungeon[]
 
   constructor() {

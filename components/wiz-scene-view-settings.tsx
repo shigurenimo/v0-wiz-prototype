@@ -5,9 +5,11 @@ import { useId, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
+import type { WizMaster } from "@/engine/models/wiz-master"
 import type { WizAction } from "@/engine/types"
 
 type Props = {
+  master: WizMaster
   state: WizStateSceneSettingsEntity
   dispatch: Dispatch<WizAction>
   secretKey: string

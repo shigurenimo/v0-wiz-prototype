@@ -12,7 +12,7 @@ type Props = {
  * 各フレームは64個の0または1の配列（Array）
  * currentFrameIndexは親コンポーネント（Component）で管理する
  */
-export function WizPixelArt(props: Props) {
+export function WizPixelAnimation(props: Props) {
   const pixelSize = props.pixelSize ?? 16
   const currentFrame = props.frames[props.currentFrame]
 
@@ -20,7 +20,7 @@ export function WizPixelArt(props: Props) {
     <div className="grid grid-cols-8">
       {currentFrame?.map((pixel, i) => (
         <div
-          key={`pixel-${props.currentFrameIndex}-${i}`}
+          key={`pixel-${props.currentFrame}-${i}`}
           className="bg-primary"
           style={{
             width: `${pixelSize}px`,

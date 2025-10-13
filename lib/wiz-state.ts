@@ -1,7 +1,7 @@
-import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
 import { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
+import { calculateMaxHp } from "@/lib/calculate-max-hp"
 
 /**
  * Create initial Wiz state internal
@@ -27,42 +27,27 @@ export async function wizState(): Promise<WizStateSceneDungeonEntity> {
       id: "vault-1",
       playerName: "あなた",
       player: (() => {
-        const characterEntity = characters[0]
-        const tempMember = new WizStateCharacterEntity({
-          id: characterEntity.id,
-          name: characterEntity.name,
-          author: characterEntity.author,
-          baseStatusPoint: characterEntity.baseStatusPoint,
-          baseStrengthPoint: characterEntity.baseStrengthPoint,
-          baseDexterityPoint: characterEntity.baseDexterityPoint,
-          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
-          profile: characterEntity.profile,
-          personality: characterEntity.personality,
-          backstory: characterEntity.backstory,
-          relationships: characterEntity.relationships,
-          exampleDialogues: characterEntity.exampleDialogues,
-          hp: 0,
+        const character = characters[0]
+        const maxHp = calculateMaxHp({
+          baseStatusPoint: character.baseStatusPoint,
           experience: 0,
           baseExperience: 12,
           multiplier: 1.5,
-          strengthPoint: 0,
-          dexterityPoint: 0,
-          intelligencePoint: 0,
         })
         return {
-          id: characterEntity.id,
-          name: characterEntity.name,
-          author: characterEntity.author,
-          baseStatusPoint: characterEntity.baseStatusPoint,
-          baseStrengthPoint: characterEntity.baseStrengthPoint,
-          baseDexterityPoint: characterEntity.baseDexterityPoint,
-          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
-          profile: characterEntity.profile,
-          personality: characterEntity.personality,
-          backstory: characterEntity.backstory,
-          relationships: characterEntity.relationships,
-          exampleDialogues: characterEntity.exampleDialogues,
-          hp: tempMember.maxHp,
+          id: character.id,
+          name: character.name,
+          author: character.author,
+          baseStatusPoint: character.baseStatusPoint,
+          baseStrengthPoint: character.baseStrengthPoint,
+          baseDexterityPoint: character.baseDexterityPoint,
+          baseIntelligencePoint: character.baseIntelligencePoint,
+          profile: character.profile,
+          personality: character.personality,
+          backstory: character.backstory,
+          relationships: character.relationships,
+          exampleDialogues: character.exampleDialogues,
+          hp: maxHp,
           experience: 0,
           baseExperience: 12,
           multiplier: 1.5,
@@ -71,42 +56,27 @@ export async function wizState(): Promise<WizStateSceneDungeonEntity> {
           intelligencePoint: 0,
         }
       })(),
-      members: characters.slice(1).map((characterEntity) => {
-        const tempMember = new WizStateCharacterEntity({
-          id: characterEntity.id,
-          name: characterEntity.name,
-          author: characterEntity.author,
-          baseStatusPoint: characterEntity.baseStatusPoint,
-          baseStrengthPoint: characterEntity.baseStrengthPoint,
-          baseDexterityPoint: characterEntity.baseDexterityPoint,
-          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
-          profile: characterEntity.profile,
-          personality: characterEntity.personality,
-          backstory: characterEntity.backstory,
-          relationships: characterEntity.relationships,
-          exampleDialogues: characterEntity.exampleDialogues,
-          hp: 0,
+      members: characters.slice(1).map((character) => {
+        const maxHp = calculateMaxHp({
+          baseStatusPoint: character.baseStatusPoint,
           experience: 0,
           baseExperience: 12,
           multiplier: 1.5,
-          strengthPoint: 0,
-          dexterityPoint: 0,
-          intelligencePoint: 0,
         })
         return {
-          id: characterEntity.id,
-          name: characterEntity.name,
-          author: characterEntity.author,
-          baseStatusPoint: characterEntity.baseStatusPoint,
-          baseStrengthPoint: characterEntity.baseStrengthPoint,
-          baseDexterityPoint: characterEntity.baseDexterityPoint,
-          baseIntelligencePoint: characterEntity.baseIntelligencePoint,
-          profile: characterEntity.profile,
-          personality: characterEntity.personality,
-          backstory: characterEntity.backstory,
-          relationships: characterEntity.relationships,
-          exampleDialogues: characterEntity.exampleDialogues,
-          hp: tempMember.maxHp,
+          id: character.id,
+          name: character.name,
+          author: character.author,
+          baseStatusPoint: character.baseStatusPoint,
+          baseStrengthPoint: character.baseStrengthPoint,
+          baseDexterityPoint: character.baseDexterityPoint,
+          baseIntelligencePoint: character.baseIntelligencePoint,
+          profile: character.profile,
+          personality: character.personality,
+          backstory: character.backstory,
+          relationships: character.relationships,
+          exampleDialogues: character.exampleDialogues,
+          hp: maxHp,
           experience: 0,
           baseExperience: 12,
           multiplier: 1.5,

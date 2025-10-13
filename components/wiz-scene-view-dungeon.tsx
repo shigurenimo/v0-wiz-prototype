@@ -8,11 +8,13 @@ import { Input } from "@/components/ui/input"
 import { WizChatMessage } from "@/components/wiz-chat-message"
 import { WizDungeonHeader } from "@/components/wiz-dungeon-header"
 import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
+import type { WizMaster } from "@/engine/models/wiz-master"
 import type { WizStateMessage } from "@/engine/models/wiz-state-message"
 import type { WizAction } from "@/engine/types"
 import { zStreamResult } from "@/lib/ai/models"
 
 type Props = {
+  master: WizMaster
   state: WizStateSceneDungeonEntity
   dispatch: Dispatch<WizAction>
   secretKey: string
