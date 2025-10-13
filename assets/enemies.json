@@ -15,7 +15,7 @@
       "slug": "goblin",
       "name": "歩く舌",
       "description": "宿主を失った寄生生物の舌部分が独立進化したもの。味蕾で化学物質を感知し獲物を追跡。唾液で獲物を溶かしてから吸収する消化器官",
-      "spriteSheetId": "0c6b8d41-9400-40a2-88e5-386ddab613c6",
+      "spriteSheetId": "tongue-sprite-1234-5678-90ab-cdef12345678",
       "baseHp": 30,
       "baseAttack": 5,
       "baseDefense": 2
@@ -25,7 +25,7 @@
       "slug": "skeleton",
       "name": "ワタガシ",
       "description": "体表から粘着性の細い糸を大量に分泌する昆虫。自分の周りに糸を巻きつけて綿菓子状の繭を形成し、その中に身を隠す。糸は空気を含んで膨らみ、ふわふわした外見になる。捕食者が噛みつくと糸が口に絡まって窒息させる。湿気を嫌い、乾燥した場所で糸の生成が活発になる",
-      "spriteSheetId": "0c6b8d41-9400-40a2-88e5-386ddab613c6",
+      "spriteSheetId": "cottoncandy-sprite-abcd-ef01-2345-67890abcdef0",
       "baseHp": 25,
       "baseAttack": 6,
       "baseDefense": 3
@@ -35,7 +35,7 @@
       "slug": "orc",
       "name": "ヤドカリネズミ",
       "description": "巣穴を持たず貝殻や頭蓋骨に住み着く齧歯類。成長に合わせて大きな殻に引っ越す習性がある。殻の中に餌を貯蔵し、危険を感じると殻に籠もる。殻を背負ったまま素早く走る脚力を持つ",
-      "spriteSheetId": "0c6b8d41-9400-40a2-88e5-386ddab613c6",
+      "spriteSheetId": "hermitmouse-sprite-1111-2222-3333-444455556666",
       "baseHp": 45,
       "baseAttack": 8,
       "baseDefense": 4
@@ -45,7 +45,7 @@
       "slug": "zombie",
       "name": "洞窟イソギンチャク",
       "description": "天井からぶら下がって触手を垂らす腔腸動物。洞窟の水滴と養分を吸収して生きる。触手に触れると軽い麻痺毒を注入される。暗闇で微弱な光を放ち、虫を誘引する",
-      "spriteSheetId": "0c6b8d41-9400-40a2-88e5-386ddab613c6",
+      "spriteSheetId": "anemone-sprite-7777-8888-9999-000011112222",
       "baseHp": 35,
       "baseAttack": 4,
       "baseDefense": 1
@@ -55,7 +55,7 @@
       "slug": "kobold",
       "name": "結晶トカゲ",
       "description": "体表から糖分を含む結晶を分泌する爬虫類。キラキラした外見で天敵を混乱させる。結晶は硬く物理攻撃を軽減する。甘い匂いで虫を誘き寄せて捕食する",
-      "spriteSheetId": "0c6b8d41-9400-40a2-88e5-386ddab613c6",
+      "spriteSheetId": "crystallizard-sprite-aaaa-bbbb-cccc-ddddeeeeffff",
       "baseHp": 20,
       "baseAttack": 4,
       "baseDefense": 1
