@@ -18,7 +18,7 @@ export const zWizSpriteSheet = z.object({
    * 各フレームは16x16の2次元配列（0 or 1）
    */
   frames: z.array(
-    z.array(z.array(z.number().int().min(0).max(1)).length(16)).length(16),
+    z.array(z.array(z.number().int()).length(16)).length(16),
   ),
 })
 

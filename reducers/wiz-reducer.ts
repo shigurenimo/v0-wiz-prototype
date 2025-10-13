@@ -16,7 +16,12 @@ export function wizReducer(
   state: WizStateEntity,
   action: WizAction,
 ): WizStateEntity {
-  console.log("wizReducer called, action:", action.type, "state type:", state.type)
+  console.log(
+    "wizReducer called, action:",
+    action.type,
+    "state type:",
+    state.type,
+  )
   if (state instanceof WizStateSceneDungeonEntity) {
     const newState = wizReducerSceneDungeon(state, action)
     console.log("After wizReducerSceneDungeon, new state type:", newState.type)

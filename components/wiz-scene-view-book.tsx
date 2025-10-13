@@ -39,14 +39,16 @@ export function WizSceneViewBook(props: Props) {
     props.state.selectedIndex !== null ? items[props.state.selectedIndex] : null
 
   const selectedEnemy =
-    props.state.bookType === "monster" && selectedItem && "baseHp" in selectedItem
+    props.state.bookType === "monster" &&
+    selectedItem &&
+    "baseHp" in selectedItem
       ? selectedItem
       : null
 
   const enemySpriteSheet = selectedEnemy
-    ? props.master.spriteSheets.find(
-        (s) => s.id === selectedEnemy.spriteSheetId,
-      )
+    ? props.master.spriteSheets.find((s) => {
+        return s.id === selectedEnemy.spriteSheetId
+      })
     : null
 
   const currentFrame = useAnimationFrame({

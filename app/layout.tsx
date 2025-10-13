@@ -24,7 +24,12 @@ type Props = Readonly<{
 export default function RootLayout(props: Props) {
   return (
     <html lang="en" className="dark">
-      <body className={cn("overflow-y-hidden overscroll-auto font-sans", font.className)}>
+      <body
+        className={cn(
+          "overflow-y-hidden overscroll-auto font-sans",
+          font.className,
+        )}
+      >
         <Suspense fallback={<div>Loading...</div>}>{props.children}</Suspense>
       </body>
     </html>
