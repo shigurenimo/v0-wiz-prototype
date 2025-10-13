@@ -16,66 +16,39 @@ Follow the KISS principle.
 - Keep responses concise
 - Always confirm if inferences are correct
 
-# Documentation Language Rules
-
-- Write all documentation in Japanese
-- Add English terms in parentheses for important nouns: ユーザ（User）
-- Keep code blocks and technical identifiers in English
-- Keep all section headings in English format
-- Use Japanese for content under English headings
-- This applies to copilot-instructions.md and other documentation files
-
-Example format:
-\`\`\`markdown
-## Game System
-ゲームシステム（Game System）の説明をここに日本語で書く。
-
-### Core Mechanics
-コア機能（Core Mechanics）について日本語で説明する。
-\`\`\`
-
 # copilot-instructions.md Template
 
 The following section names must never be changed:
 
-\`\`\`markdown
+```markdown
 # Overview
-[Application overview description in Japanese]
+[Application overview description]
 
 ## Directory Structure
-[Directory structure with English comments in code blocks]
+[Directory structure]
 
 ## Technical Features
-[Technology stack description in Japanese]
+[Technology stack]
 
 ## Decoupled Design
-[System separation policy in Japanese]
+[System separation policy]
 
 ## Core Location
-[Core functionality placement in Japanese]
+[Core functionality placement]
 
 ## System Independence
-[Independence of each system in Japanese]
-
-## Product Specifications
-[Important product specifications in Japanese]
-\`\`\`
+[Independence of each system]
+```
 
 ## Optional Sections
 
-You can add additional level 2 headings (##) as needed for supplementary information.
-Use level 3 headings (###) to organize content within sections.
-
-\`\`\`markdown
+```markdown
 ## Domain Systems
 [Domain-specific systems - for special business logic]
 
-### Specific Domain A
-[Detailed explanation in Japanese]
-
-### Specific Domain B
-[Detailed explanation in Japanese]
-
 ## API Design
 [API design policy - for API-centric projects]
-\`\`\`
+
+## Data Flow
+[Data flow - for complex data processing]
+```

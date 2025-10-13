@@ -12,7 +12,14 @@
       "nursery": {
         "useSortedClasses": "error"
       }
-    }
+    },
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "!components/ui/**/*",
+      "!hooks/use-toast.ts",
+      "!route-tree.gen.ts"
+    ]
   },
   "javascript": {
     "formatter": {

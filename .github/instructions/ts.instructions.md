@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.{ts,tsx}"
+applyTo: "**"
 ---
 
 # TypeScript Rules
@@ -30,10 +30,10 @@ Multiple variables and types can be exported in these files:
 - No type assertion
 - Do NOT use enum
 
-\`\`\`ts
+```ts
 const user = {} as User // Do NOT use type assertion
 const foo = {} as any // Do NOT use any type
-\`\`\`
+```
 
 ## Naming Conventions
 
@@ -92,7 +92,7 @@ const foo = {} as any // Do NOT use any type
 - Isolate side effects
 - Ensure type safety
 
-\`\`\`ts
+```ts
 type Props = {}
 
 /**
@@ -102,7 +102,7 @@ export function FunctionName(props: Props) {
   // props.prop1 // Use props directly
   // const { prop1, prop2 } = props // Do NOT use destructuring
 }
-\`\`\`
+```
 
 ### Classes
 
@@ -115,7 +115,7 @@ export function FunctionName(props: Props) {
 - All properties must be readonly
 - Constructor must call Object.freeze(this) for immutability
 
-\`\`\`ts
+```ts
 type Props = {}
 
 /**
@@ -133,7 +133,7 @@ export class ClassName {
     // method implementation
   }
 }
-\`\`\`
+```
 
 ## Design Patterns
 
@@ -142,7 +142,7 @@ export class ClassName {
 - **Method Chaining**: Enable natural, readable operation sequences
 - **Immutability**: Return new objects instead of modifying existing ones
 
-\`\`\`ts
+```ts
 export class Document {
   constructor(private readonly data: Data) {}
   
@@ -161,13 +161,13 @@ const result = document.withTitle("New").withAuthor("John").toMarkdown()
 // ❌ Avoid: Imperative mutations
 document.setTitle("New")
 const result = document.getMarkdown()
-\`\`\`
+```
 
 ### Service Layer Pattern
 
 - **Centralized Coordination**: Coordinate multiple domain objects and external resources
 
-\`\`\`ts
+```ts
 export class DocumentService {
   constructor(
     private readonly fileSystem: FileSystem,
@@ -181,13 +181,13 @@ export class DocumentService {
     return new Document(this.validator.validate(parsed))
   }
 }
-\`\`\`
+```
 
 ### Facade Pattern
 
 - **Unified Interface**: Hide complexity behind simple methods
 
-\`\`\`ts
+```ts
 export class DocumentFacade {
   async get(path: string): Promise<Document> {
     const content = await this.readFile(path)
@@ -196,7 +196,7 @@ export class DocumentFacade {
     return new Document(validated)
   }
 }
-\`\`\`
+```
 
 ### Other Patterns
 
@@ -222,7 +222,7 @@ export class DocumentFacade {
 
 ### Domain Logic Encapsulation
 
-\`\`\`ts
+```ts
 // ✅ Recommended: Logic encapsulated in domain object
 const updatedDocument = document.withProperties(newProperties)
 const markdown = updatedDocument.toMarkdown()
@@ -230,11 +230,11 @@ const markdown = updatedDocument.toMarkdown()
 // ❌ Avoid: Manual operations scattered in calling code
 const merged = { ...document.properties, ...newProperties }
 const formatted = formatMarkdown(merged, document.content)
-\`\`\`
+```
 
 ### Separation of Concerns
 
-\`\`\`ts
+```ts
 // ✅ Recommended: Clear separation of concerns
 const validated = validator.validate(data)
 const transformed = transformer.transform(validated)
@@ -249,4 +249,4 @@ async function processData(data) {
   await db.save(data)
   return data
 }
-\`\`\`
+```
