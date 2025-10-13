@@ -1,16 +1,24 @@
-export type EventType = "SCENERY" | "DAMAGE" | "ITEM" | "COMBAT"
+export type EventType =
+  | "EVENT_SCENE"
+  | "EVENT_DAMAGE"
+  | "EVENT_ITEM"
+  | "EVENT_BATTLE"
 
 export type GeneratedEvent =
-  | { type: "SCENERY" }
-  | { type: "DAMAGE"; damage: number }
-  | { type: "ITEM"; itemId: string }
-  | { type: "COMBAT"; enemyName: string }
+  | { type: "EVENT_SCENE"; text: "" }
+  | { type: "EVENT_DAMAGE"; damage: number; text: "" }
+  | { type: "EVENT_ITEM"; itemIds: string[]; text: "" }
+  | {
+      type: "EVENT_BATTLE"
+      enemies: Array<{ id: string; enemyId: string }>
+      text: ""
+    }
 
 type Props = {
   availableItemIds: string[]
 }
 
-const ENEMY_NAMES = ["ゴブリン", "スケルトン", "オーク", "ゾンビ", "コボルト"]
+const _ENEMY_IDS = ["goblin", "skeleton", "orc", "zombie", "kobold"]
 
 /**
  * EventGenerator
@@ -25,14 +33,19 @@ export class WizEventGenerator {
    */
   generate(): GeneratedEvent {
     // デバッグ用: 戦闘100%
-    const enemyName =
-      ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)]
+    const enemyId = _ENEMY_IDS[Math.floor(Math.random() * _ENEMY_IDS.length)]
     return {
-      type: "COMBAT",
-      enemyName: enemyName,
+      type: "EVENT_BATTLE",
+      enemies: [
+        {
+          id: `enemy-${Date.now()}`,
+          enemyId: enemyId,
+        },
+      ],
+      text: "",
     }
 
-    // const eventTypes: EventType[] = ["SCENERY", "DAMAGE", "ITEM", "COMBAT"]
+    // const eventTypes: EventType[] = ["EVENT_SCENE", "EVENT_DAMAGE", "EVENT_ITEM", "EVENT_BATTLE"]
     // const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)]
 
     // if (eventType === "COMBAT") {

@@ -85,12 +85,12 @@ export function TypewriterText({
       const noisyChar = noisyChars[index]
       if (noisyChar) {
         return (
-          <span key={index} className="text-primary/50">
+          <span key={`char-noisy-${index}`} className="text-primary/50">
             {noisyChar}
           </span>
         )
       }
-      return <span key={index}>{char}</span>
+      return <span key={`char-${index}`}>{char}</span>
     })
   }
 

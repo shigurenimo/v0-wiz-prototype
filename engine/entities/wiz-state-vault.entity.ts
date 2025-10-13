@@ -18,15 +18,56 @@ export class WizStateVaultEntity {
     return this.vault.playerName
   }
 
+  get player() {
+    return new WizStateCharacterEntity(this.vault.player)
+  }
+
   get members() {
-    return this.vault.members.map((member) => {
+    const members = this.vault.members.map((member) => {
       return new WizStateCharacterEntity(member)
     })
+
+    return [this.player, ...members]
   }
 
   get inventory() {
     return this.vault.inventory.map((item) => {
       return new WizStateItemEntity(item)
     })
+  }
+
+  get logs() {
+    return this.vault.logs
+  }
+
+  get secretKey() {
+    return this.vault.secretKey
+  }
+
+  withAddedLogs(
+    newLogs: (typeof this.vault.logs)[number][],
+  ): WizStateVaultEntity {
+    return new WizStateVaultEntity({
+      ...this.vault,
+      logs: [...this.vault.logs, ...newLogs],
+    })
+  }
+
+  withSecretKey(secretKey: string): WizStateVaultEntity {
+    return new WizStateVaultEntity({
+      ...this.vault,
+      secretKey: secretKey,
+    })
+  }
+
+  withoutSecretKey(): WizStateVaultEntity {
+    return new WizStateVaultEntity({
+      ...this.vault,
+      secretKey: null,
+    })
+  }
+
+  toObject(): WizVault {
+    return this.vault
   }
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import type { Dispatch } from "react"
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
@@ -19,6 +19,7 @@ type Props = {
  */
 export function WizSceneViewSettings(props: Props) {
   const [showFullKey, setShowFullKey] = useState(false)
+  const secretKeyInputId = useId()
 
   const maskedKey = props.secretKey
     ? `${props.secretKey.slice(0, 4)}${"*".repeat(12)}${props.secretKey.slice(-4)}`
@@ -41,11 +42,15 @@ export function WizSceneViewSettings(props: Props) {
 
         <div className="space-y-4 rounded-lg border border-border bg-secondary p-6">
           <div className="space-y-2">
-            <label className="font-medium font-mono text-primary text-sm">
+            <label
+              htmlFor={secretKeyInputId}
+              className="font-medium font-mono text-primary text-sm"
+            >
               シークレットキー
             </label>
             <div className="flex gap-2">
               <Input
+                id={secretKeyInputId}
                 type={showFullKey ? "text" : "password"}
                 value={showFullKey ? props.secretKey : maskedKey}
                 readOnly

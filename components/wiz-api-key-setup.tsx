@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -11,6 +11,7 @@ interface WizApiKeySetupProps {
 
 export function WizApiKeySetup({ onApiKeySet }: WizApiKeySetupProps) {
   const [apiKey, setApiKey] = useState("")
+  const apiKeyInputId = useId()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,11 +33,11 @@ export function WizApiKeySetup({ onApiKeySet }: WizApiKeySetupProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="apiKey" className="font-medium text-sm">
+            <label htmlFor={apiKeyInputId} className="font-medium text-sm">
               APIキー
             </label>
             <Input
-              id="apiKey"
+              id={apiKeyInputId}
               type="password"
               placeholder="sk-ant-..."
               value={apiKey}

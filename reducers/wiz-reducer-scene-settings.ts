@@ -13,5 +13,13 @@ export function wizReducerSceneSettings(
     return state
   }
 
+  if (action.type === "SET_SECRET_KEY") {
+    return state.withSecretKey(action.payload)
+  }
+
+  if (action.type === "DELETE_SECRET_KEY") {
+    return state.withoutSecretKey()
+  }
+
   return state
 }

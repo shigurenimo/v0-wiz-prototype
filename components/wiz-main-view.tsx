@@ -1,18 +1,17 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { use, useReducer } from "react"
+import { use, useEffect, useReducer } from "react"
 import { useSecretKey } from "@/hooks/use-secret-key"
-import { createWizState } from "@/lib/wiz-state"
+import { wizState } from "@/lib/debug/wiz-state-sakura"
 import { wizReducer } from "@/reducers/wiz-reducer"
-import { WizSceneViewDungeon } from "./wiz-scene-view-dungeon"
-import { WizSceneViewSettings } from "./wiz-scene-view-settings"
+import { WizScene } from "./wiz-scene"
 import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 
 export function WizMainView() {
   const stateQuery = useQuery({
     queryKey: ["wizState"],
-    queryFn: createWizState,
+    queryFn: wizState,
     experimental_prefetchInRender: true,
   })
 
@@ -24,36 +23,43 @@ export function WizMainView() {
     storageKey: "wiz.secret.key",
   })
 
+  useEffect(() => {
+    if (secretKeyState.secretKey && state.vault.secretKey === null) {
+      dispatch({
+        type: "SET_SECRET_KEY",
+        payload: secretKeyState.secretKey,
+      })
+    }
+  }, [secretKeyState.secretKey, state.vault.secretKey])
+
+  const handleSecretKeySet = (key: string) => {
+    secretKeyState.handleSecretKeySet(key)
+    dispatch({
+      type: "SET_SECRET_KEY",
+      payload: key,
+    })
+  }
+
+  const handleSecretKeyDelete = () => {
+    secretKeyState.handleSecretKeyDelete()
+    dispatch({
+      type: "DELETE_SECRET_KEY",
+    })
+  }
+
   if (secretKeyState.isLoading) {
     return null
   }
 
-  if (!secretKeyState.secretKey) {
-    return (
-      <WizSecretKeySetup onSecretKeySet={secretKeyState.handleSecretKeySet} />
-    )
+  if (!state.vault.secretKey) {
+    return <WizSecretKeySetup onSecretKeySet={handleSecretKeySet} />
   }
 
-  if (state.type === "dungeon") {
-    return (
-      <WizSceneViewDungeon
-        state={state}
-        dispatch={dispatch}
-        secretKey={secretKeyState.secretKey}
-      />
-    )
-  }
-
-  if (state.type === "settings") {
-    return (
-      <WizSceneViewSettings
-        state={state}
-        dispatch={dispatch}
-        secretKey={secretKeyState.secretKey}
-        onSecretKeyDelete={secretKeyState.handleSecretKeyDelete}
-      />
-    )
-  }
-
-  return null
+  return (
+    <WizScene
+      state={state}
+      dispatch={dispatch}
+      onSecretKeyDelete={handleSecretKeyDelete}
+    />
+  )
 }

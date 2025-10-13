@@ -1,25 +1,9 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
-import { z } from "zod"
 import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.entity"
-import { zWizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import { WizItemRepository } from "@/engine/repositories/wiz-item-repository"
+import { requestSchema } from "@/lib/ai/models"
 import { streamDungeonChat } from "@/lib/ai/stream-dungeon-chat"
-import { streamDungeonEvent } from "@/lib/ai/stream-dungeon-event"
-
-const requestSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("chat"),
-    secretKey: z.string(),
-    playerInput: z.string(),
-    state: zWizStateSceneDungeon,
-  }),
-  z.object({
-    type: z.literal("event"),
-    secretKey: z.string(),
-    state: zWizStateSceneDungeon,
-  }),
-])
 
 /**
  * - do NOT use try-catch here
@@ -29,13 +13,7 @@ const requestSchema = z.discriminatedUnion("type", [
 export async function POST(request: Request) {
   const json = await request.json()
 
-  const parseResult = requestSchema.safeParse(json)
-
-  if (!parseResult.success) {
-    return new Response("Invalid request body", { status: 400 })
-  }
-
-  const body = parseResult.data
+  const body = requestSchema.parse(json)
 
   const validSecretKey = process.env.SECRET_KEY
 
@@ -57,6 +35,7 @@ export async function POST(request: Request) {
   const itemRepository = new WizItemRepository()
 
   const characters = await characterRepository.findMany()
+
   const items = await itemRepository.findMany()
 
   const google = createGoogleGenerativeAI({
@@ -74,21 +53,69 @@ export async function POST(request: Request) {
   if (body.type === "event") {
     const availableItemIds = items.map((item) => item.id)
 
-    const result = streamDungeonEvent({
-      google: google,
-      partyInfo: partyInfo,
-      currentDepth: body.state.depth,
+    const WizEventGenerator = (
+      await import("@/engine/modules/wiz-event-generator")
+    ).WizEventGenerator
+    const eventGenerator = new WizEventGenerator({
       availableItemIds: availableItemIds,
     })
+    const event = eventGenerator.generate()
 
-    return result.toTextStreamResponse()
+    if (event.type === "EVENT_SCENE") {
+      const streamEventScene = (await import("@/lib/ai/stream-event-scene"))
+        .streamEventScene
+      const result = streamEventScene({
+        google: google,
+        partyInfo: partyInfo,
+        currentDepth: body.state.depth,
+      })
+      return result.toTextStreamResponse()
+    }
+
+    if (event.type === "EVENT_DAMAGE") {
+      const streamEventDamage = (await import("@/lib/ai/stream-event-damage"))
+        .streamEventDamage
+      const result = streamEventDamage({
+        google: google,
+        partyInfo: partyInfo,
+        currentDepth: body.state.depth,
+        damage: event.damage,
+      })
+      return result.toTextStreamResponse()
+    }
+
+    if (event.type === "EVENT_ITEM") {
+      const streamEventItem = (await import("@/lib/ai/stream-event-item"))
+        .streamEventItem
+      const result = streamEventItem({
+        google: google,
+        partyInfo: partyInfo,
+        currentDepth: body.state.depth,
+        itemIds: event.itemIds,
+      })
+      return result.toTextStreamResponse()
+    }
+
+    if (event.type === "EVENT_BATTLE") {
+      const streamEventBattle = (await import("@/lib/ai/stream-event-battle"))
+        .streamEventBattle
+      const result = streamEventBattle({
+        google: google,
+        partyInfo: partyInfo,
+        currentDepth: body.state.depth,
+        enemies: event.enemies,
+      })
+      return result.toTextStreamResponse()
+    }
+
+    return new Response("Unknown event type", { status: 500 })
   }
 
   const result = streamDungeonChat({
     google: google,
     partyInfo: partyInfo,
     currentDepth: body.state.depth,
-    chatMessages: body.state.chatMessages,
+    chatMessages: body.state.vault.logs,
     playerInput: body.playerInput,
     characters: characters,
   })

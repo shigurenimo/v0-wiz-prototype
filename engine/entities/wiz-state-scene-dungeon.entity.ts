@@ -1,5 +1,6 @@
+import type { z } from "zod"
 import { WizStateVaultEntity } from "@/engine/entities/wiz-state-vault.entity"
-import type { WizStateMessage } from "@/engine/models/wiz-state-message"
+import type { zWizStateLog } from "@/engine/models/wiz-state-log"
 import type { WizStateSceneDungeon } from "@/engine/models/wiz-state-scene-dungeon"
 
 /**
@@ -18,16 +19,12 @@ export class WizStateSceneDungeonEntity {
     return this.state.dungeonId
   }
 
-  get inputValue() {
-    return this.state.inputValue
-  }
-
   get depth() {
     return this.state.depth
   }
 
-  get chatMessages() {
-    return this.state.chatMessages
+  get time() {
+    return this.state.time
   }
 
   get currentMessageIndex() {
@@ -35,11 +32,11 @@ export class WizStateSceneDungeonEntity {
   }
 
   get currentMessage() {
-    return this.state.chatMessages[this.state.currentMessageIndex]
+    return this.vault.logs[this.state.currentMessageIndex]
   }
 
   get hasUnreadMessages() {
-    return this.state.currentMessageIndex < this.state.chatMessages.length - 1
+    return this.state.currentMessageIndex < this.vault.logs.length - 1
   }
 
   get narrativeSettings() {
@@ -50,8 +47,8 @@ export class WizStateSceneDungeonEntity {
     return new WizStateVaultEntity(this.state.vault)
   }
 
-  get combatState() {
-    return this.state.combatState
+  get nextBattle() {
+    return this.state.nextBattle
   }
 
   /**
@@ -72,23 +69,26 @@ export class WizStateSceneDungeonEntity {
   }
 
   /**
-   * 入力値を設定
+   * 時間を1増やす
    */
-  withInputValue(inputValue: string): WizStateSceneDungeonEntity {
+  withIncrementedTime(): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      inputValue: inputValue,
+      time: this.state.time + 1,
     })
   }
 
   /**
-   * チャットメッセージを追加
+   * ログを追加
    */
-  withMessages(messages: WizStateMessage[]): WizStateSceneDungeonEntity {
+  withAddedLogs(
+    logs: z.infer<typeof zWizStateLog>[],
+  ): WizStateSceneDungeonEntity {
+    const newVault = this.vault.withAddedLogs(logs)
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      chatMessages: [...this.state.chatMessages, ...messages],
-      currentMessageIndex: this.state.chatMessages.length,
+      vault: newVault.toObject(),
+      currentMessageIndex: this.vault.logs.length,
     })
   }
 
@@ -100,7 +100,7 @@ export class WizStateSceneDungeonEntity {
       ...this.state,
       currentMessageIndex: Math.min(
         this.state.currentMessageIndex + 1,
-        this.state.chatMessages.length - 1,
+        this.vault.logs.length - 1,
       ),
     })
   }
@@ -149,41 +149,67 @@ export class WizStateSceneDungeonEntity {
   }
 
   /**
-   * 戦闘状態を設定
+   * 次の戦闘を設定
    */
-  withCombatState(combatState: {
-    enemyName: string
+  withNextBattle(nextBattle: {
+    enemies: Array<{ id: string; enemyId: string }>
     chatCount: number
   }): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      combatState: combatState,
+      nextBattle: nextBattle,
     })
   }
 
   /**
    * 戦闘中のチャット回数を増やす
    */
-  withIncrementedCombatChat(): WizStateSceneDungeonEntity {
-    if (!this.state.combatState) {
+  withIncrementedBattleChat(): WizStateSceneDungeonEntity {
+    if (!this.state.nextBattle) {
       return this
     }
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      combatState: {
-        ...this.state.combatState,
-        chatCount: this.state.combatState.chatCount + 1,
+      nextBattle: {
+        ...this.state.nextBattle,
+        chatCount: this.state.nextBattle.chatCount + 1,
       },
     })
   }
 
   /**
-   * 戦闘状態を解除
+   * 次の戦闘を解除
    */
-  withoutCombatState(): WizStateSceneDungeonEntity {
+  withoutNextBattle(): WizStateSceneDungeonEntity {
     return new WizStateSceneDungeonEntity({
       ...this.state,
-      combatState: null,
+      nextBattle: null,
+    })
+  }
+
+  /**
+   * シークレットキーを設定
+   */
+  withSecretKey(secretKey: string): WizStateSceneDungeonEntity {
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      vault: {
+        ...this.state.vault,
+        secretKey: secretKey,
+      },
+    })
+  }
+
+  /**
+   * シークレットキーを削除
+   */
+  withoutSecretKey(): WizStateSceneDungeonEntity {
+    return new WizStateSceneDungeonEntity({
+      ...this.state,
+      vault: {
+        ...this.state.vault,
+        secretKey: null,
+      },
     })
   }
 }
