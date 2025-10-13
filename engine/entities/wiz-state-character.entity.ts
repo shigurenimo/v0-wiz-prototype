@@ -25,6 +25,10 @@ export class WizStateCharacterEntity {
     return this.props.author
   }
 
+  get spriteSheetId() {
+    return this.props.spriteSheetId
+  }
+
   get baseStatusPoint() {
     return this.props.baseStatusPoint
   }

@@ -103,14 +103,18 @@ export function wizReducerSceneDungeon(
     if (!state.nextBattle) {
       return state
     }
-    const firstEnemy = state.nextBattle.enemies[0]
     return new WizStateSceneDungeonBattleEntity({
       type: "dungeon-battle",
       dungeonId: state.dungeonId,
       depth: state.depth,
-      enemyName: firstEnemy.enemyId,
-      enemyHp: 30,
-      enemyMaxHp: 30,
+      enemies: state.nextBattle.enemies.map((enemy) => ({
+        id: enemy.id,
+        enemyId: enemy.enemyId,
+        hp: 30,
+        maxHp: 30,
+      })),
+      turn: 0,
+      chatCount: 0,
       narrativeSettings: state.narrativeSettings,
       vault: state.vault.toObject(),
     })

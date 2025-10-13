@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "id": "goblin",
+      "name": "ゴブリン",
+      "description": "小柄で素早い緑色の怪物",
+      "spriteSheetId": "slime",
+      "baseHp": 30,
+      "baseAttack": 5,
+      "baseDefense": 2
+    },
+    {
+      "id": "skeleton",
+      "name": "スケルトン",
+      "description": "骨だけの不死の戦士",
+      "spriteSheetId": "slime",
+      "baseHp": 25,
+      "baseAttack": 6,
+      "baseDefense": 3
+    },
+    {
+      "id": "orc",
+      "name": "オーク",
+      "description": "力強い獣人の戦士",
+      "spriteSheetId": "slime",
+      "baseHp": 45,
+      "baseAttack": 8,
+      "baseDefense": 4
+    },
+    {
+      "id": "zombie",
+      "name": "ゾンビ",
+      "description": "腐敗した不死者",
+      "spriteSheetId": "slime",
+      "baseHp": 35,
+      "baseAttack": 4,
+      "baseDefense": 1
+    },
+    {
+      "id": "kobold",
+      "name": "コボルド",
+      "description": "犬のような小型の怪物",
+      "spriteSheetId": "slime",
+      "baseHp": 20,
+      "baseAttack": 4,
+      "baseDefense": 1
+    }
+  ]
+}

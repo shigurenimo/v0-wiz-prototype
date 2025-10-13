@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     currentDepth: body.state.depth,
     chatMessages: body.state.vault.logs,
     playerInput: body.playerInput,
-    characters: characters,
+    characters: [body.state.vault.player, ...body.state.vault.members],
   })
 
   return result.toTextStreamResponse()

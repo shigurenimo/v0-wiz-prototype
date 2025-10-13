@@ -1,7 +1,7 @@
 import type { GoogleGenerativeAIProvider } from "@ai-sdk/google"
 import { streamObject } from "ai"
 import { z } from "zod"
-import type { WizCharacterEntity } from "@/engine/entities/wiz-character.entity"
+import type { WizStateCharacter } from "@/engine/models/wiz-state-character"
 import {
   type zWizStateLog,
   zWizStateLogEventChat,
@@ -18,7 +18,7 @@ type Props = {
   currentDepth: number
   chatMessages: z.infer<typeof zWizStateLog>[]
   playerInput: string
-  characters: readonly WizCharacterEntity[]
+  characters: readonly WizStateCharacter[]
 }
 
 /**

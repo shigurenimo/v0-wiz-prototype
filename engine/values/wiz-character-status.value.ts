@@ -1,7 +1,7 @@
-import type { WizCharacterEntity } from "@/engine/entities/wiz-character.entity"
+import type { WizStateCharacter } from "@/engine/models/wiz-state-character"
 
 type Props = {
-  character: WizCharacterEntity
+  character: WizStateCharacter
   experience: number
   baseExperience: number
   multiplier: number
@@ -11,7 +11,7 @@ type Props = {
 }
 
 /**
- * キャラクターのステータス
+ * キャラクターのステータス（Status）
  */
 export class WizCharacterStatusValue {
   constructor(private readonly props: Props) {
@@ -19,7 +19,7 @@ export class WizCharacterStatusValue {
   }
 
   /**
-   * 最大HP
+   * 最大HP（Max HP）
    * (baseStatusPoint * level) * 2
    */
   maxHp(level: number) {
@@ -27,7 +27,7 @@ export class WizCharacterStatusValue {
   }
 
   /**
-   * 力ポイント
+   * 力ポイント（Strength Point）
    * baseStrengthPoint + strengthPoint
    */
   get strength() {
@@ -35,7 +35,7 @@ export class WizCharacterStatusValue {
   }
 
   /**
-   * 器用さポイント
+   * 器用さポイント（Dexterity Point）
    * baseDexterityPoint + dexterityPoint
    */
   get dexterity() {
@@ -43,7 +43,7 @@ export class WizCharacterStatusValue {
   }
 
   /**
-   * 知性ポイント
+   * 知性ポイント（Intelligence Point）
    * baseIntelligencePoint + intelligencePoint
    */
   get intelligence() {

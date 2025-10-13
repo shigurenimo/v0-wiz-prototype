@@ -3,12 +3,11 @@
 import { experimental_useObject as useObject } from "@ai-sdk/react"
 import type { Dispatch } from "react"
 import { useState } from "react"
-import { WIZ_SHEET_SLIME } from "@/assets/sheets/wiz-sheet-slime"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { WizChatMessage } from "@/components/wiz-chat-message"
 import { WizDungeonHeader } from "@/components/wiz-dungeon-header"
-import { WizPixelAnimation } from "@/components/wiz-pixel-animation"
+import { WizPixelArtAnimation } from "@/components/wiz-pixel-art-animation"
 import type { WizStateSceneDungeonBattleEntity } from "@/engine/entities/wiz-state-scene-dungeon-battle.entity"
 import type { WizMaster } from "@/engine/models/wiz-master"
 import type { WizAction } from "@/engine/types"
@@ -30,8 +29,16 @@ export function WizSceneViewDungeonBattle(props: Props) {
 
   const [inputValue, setInputValue] = useState("")
 
+  const firstEnemy = props.state.enemies[0]
+  const enemyMaster = props.master.enemies.find(
+    (e) => e.id === firstEnemy?.enemyId,
+  )
+  const enemySpriteSheet = props.master.spriteSheets.find(
+    (s) => s.id === enemyMaster?.spriteSheetId,
+  )
+
   const currentFrame = useAnimationFrame({
-    frameCount: WIZ_SHEET_SLIME.length,
+    frameCount: enemySpriteSheet?.frames.length ?? 1,
     frameDelay: 300,
   })
 
@@ -92,8 +99,14 @@ export function WizSceneViewDungeonBattle(props: Props) {
 
       <div className="fixed top-0 right-0 left-0 flex items-center justify-center pt-40">
         <div className="flex gap-x-8">
-          <WizPixelAnimation frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
-          <WizPixelAnimation frames={WIZ_SHEET_SLIME} currentFrame={currentFrame} />
+          <WizPixelArtAnimation
+            frames={enemySpriteSheet?.frames ?? []}
+            currentFrameIndex={currentFrame}
+          />
+          <WizPixelArtAnimation
+            frames={enemySpriteSheet?.frames ?? []}
+            currentFrameIndex={currentFrame}
+          />
         </div>
       </div>
 

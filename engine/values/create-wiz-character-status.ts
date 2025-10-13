@@ -1,8 +1,8 @@
-import type { WizCharacterEntity } from "@/engine/entities/wiz-character.entity"
+import type { WizStateCharacter } from "@/engine/models/wiz-state-character"
 import { WizCharacterStatusValue } from "@/engine/values/wiz-character-status.value"
 
 type Props = {
-  character: WizCharacterEntity
+  character: WizStateCharacter
   experience: number
   baseExperience: number
   multiplier: number
@@ -12,7 +12,9 @@ type Props = {
 }
 
 /**
- * Create Wiz Character Status
+ * createWizCharacterStatus
+ *
+ * キャラクターステータス（Character Status）のValueオブジェクトを生成
  */
 export function createWizCharacterStatus(props: Props) {
   return new WizCharacterStatusValue(props)

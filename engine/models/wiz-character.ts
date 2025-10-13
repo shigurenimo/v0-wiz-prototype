@@ -2,12 +2,16 @@ import { z } from "zod"
 import { zWizCharacterRelationship } from "@/engine/models/wiz-character-relationship"
 
 /**
- * キャラクター・プロトタイプ
+ * キャラクター・プロトタイプ（Character Prototype）
  */
 export const zWizCharacter = z.object({
   id: z.string(),
   name: z.string(),
   author: z.string().nullable(),
+  /**
+   * スプライトシートID（Sprite Sheet ID）
+   */
+  spriteSheetId: z.string(),
   baseStatusPoint: z.number().int().min(0),
   baseStrengthPoint: z.number().int().min(0),
   baseDexterityPoint: z.number().int().min(0),
