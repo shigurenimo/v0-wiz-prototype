@@ -1,5 +1,6 @@
 import type { z } from "zod"
 import type { zWizStateLog } from "@/engine/models/wiz-state-log"
+import type { WizBookType } from "@/engine/models/wiz-state-scene-book"
 
 type Log = z.infer<typeof zWizStateLog>
 
@@ -42,3 +43,8 @@ export type WizAction =
   | { type: "BACK_TO_DUNGEON" }
   | { type: "SET_SECRET_KEY"; payload: string }
   | { type: "DELETE_SECRET_KEY" }
+  | { type: "NAVIGATE_TO_SCENE"; payload: string }
+  | { type: "BOOK_CHANGE_TYPE"; payload: WizBookType }
+  | { type: "BOOK_SELECT_INDEX"; payload: number | null }
+  | { type: "NAVIGATE_TO_BOOK_FROM_DUNGEON" }
+  | { type: "NAVIGATE_BACK_FROM_BOOK" }

@@ -84,20 +84,21 @@ export function WizSceneViewDungeonBattle(props: Props) {
   }
 
   const streamingLogs =
-    api.isLoading && api.object?.logs
-      ? api.object.logs.filter((log) => log !== undefined)
-      : []
+    api.object?.logs?.filter((log) => log !== undefined) ?? []
+
+  const currentLogs = api.isLoading ? streamingLogs : []
 
   const historyLogs = props.state.vault.logs
-  const _displayLogs = api.isLoading
-    ? [...historyLogs, ...streamingLogs]
-    : historyLogs
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">
-      <WizDungeonHeader depth={props.state.depth} player={player} />
+      <WizDungeonHeader
+        depth={props.state.depth}
+        player={player}
+        dispatch={props.dispatch}
+      />
 
-      <div className="fixed top-0 right-0 left-0 flex items-center justify-center pt-40">
+      <div className="-z-10 fixed top-0 right-0 left-0 flex items-center justify-center pt-40">
         <div className="flex gap-x-8">
           <WizPixelArtAnimation
             frames={enemySpriteSheet?.frames ?? []}
@@ -112,19 +113,27 @@ export function WizSceneViewDungeonBattle(props: Props) {
 
       <div className="w-full max-w-2xl space-y-6">
         <div className="space-y-4">
-          {_displayLogs.slice(-10).map((log, index) => {
-            const sum = Math.min(_displayLogs.length, 10)
+          {historyLogs.slice(-10).map((log, index) => {
+            const sum = Math.min(historyLogs.length, 10)
             const opacity = 1.0 - (sum - 1 - index) * 0.1
             if (opacity <= 0) return null
             return (
               <WizChatMessage
-                key={log.id ?? `log-${index}`}
+                key={log.id}
                 log={log}
                 members={props.state.vault.members}
                 opacity={opacity}
               />
             )
           })}
+          {currentLogs.map((message, index) => (
+            <WizChatMessage
+              key={index.toFixed()}
+              log={message}
+              members={props.state.vault.members}
+              opacity={1.0}
+            />
+          ))}
         </div>
 
         <div className="space-y-2">

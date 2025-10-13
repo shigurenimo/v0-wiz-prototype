@@ -18,7 +18,11 @@ type Props = {
   availableItemIds: string[]
 }
 
-const _ENEMY_IDS = ["goblin", "skeleton", "orc", "zombie", "kobold"]
+const ENEMY_IDS = [
+  "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "d4e5f6a7-b8c9-0123-def1-234567890123",
+]
 
 /**
  * EventGenerator
@@ -33,7 +37,7 @@ export class WizEventGenerator {
    */
   generate(): GeneratedEvent {
     // デバッグ用: 戦闘100%
-    const enemyId = _ENEMY_IDS[Math.floor(Math.random() * _ENEMY_IDS.length)]
+    const enemyId = ENEMY_IDS[Math.floor(Math.random() * ENEMY_IDS.length)]
     return {
       type: "EVENT_BATTLE",
       enemies: [

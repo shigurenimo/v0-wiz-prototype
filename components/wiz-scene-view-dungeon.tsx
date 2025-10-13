@@ -162,7 +162,11 @@ export function WizSceneViewDungeon(props: Props) {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">
-      <WizDungeonHeader depth={props.state.depth} player={player} />
+      <WizDungeonHeader
+        depth={props.state.depth}
+        player={player}
+        dispatch={props.dispatch}
+      />
 
       <div className="w-full max-w-2xl space-y-6">
         <div className="space-y-4">

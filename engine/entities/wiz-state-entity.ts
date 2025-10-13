@@ -1,3 +1,4 @@
+import type { WizStateSceneBookEntity } from "@/engine/entities/wiz-state-scene-book.entity"
 import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
 import type { WizStateSceneDungeonBattleEntity } from "@/engine/entities/wiz-state-scene-dungeon-battle.entity"
 import type { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
@@ -9,3 +10,4 @@ export type WizStateEntity =
   | WizStateSceneDungeonEntity
   | WizStateSceneDungeonBattleEntity
   | WizStateSceneSettingsEntity
+  | WizStateSceneBookEntity

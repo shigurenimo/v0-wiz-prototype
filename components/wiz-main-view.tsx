@@ -6,7 +6,7 @@ import { WizMasterRepository } from "@/engine/repositories/wiz-master-repository
 import { useSecretKey } from "@/hooks/use-secret-key"
 import { wizState } from "@/lib/debug/wiz-state-sakura"
 import { wizReducer } from "@/reducers/wiz-reducer"
-import { WizScene } from "./wiz-scene"
+import { WizSceneView } from "./wiz-scene-view"
 import { WizSecretKeySetup } from "./wiz-secret-key-setup"
 
 export function WizMainView() {
@@ -67,7 +67,7 @@ export function WizMainView() {
   }
 
   return (
-    <WizScene
+    <WizSceneView
       master={master}
       state={state}
       dispatch={dispatch}

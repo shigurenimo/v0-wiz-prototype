@@ -1,4 +1,5 @@
 import type { WizStateEntity } from "@/engine/entities/wiz-state-entity"
+import { WizStateSceneBookEntity } from "@/engine/entities/wiz-state-scene-book.entity"
 import type { WizStateSceneDungeonEntity } from "@/engine/entities/wiz-state-scene-dungeon.entity"
 import { WizStateSceneDungeonBattleEntity } from "@/engine/entities/wiz-state-scene-dungeon-battle.entity"
 import { WizStateSceneSettingsEntity } from "@/engine/entities/wiz-state-scene-settings.entity"
@@ -156,6 +157,24 @@ export function wizReducerSceneDungeon(
 
   if (action.type === "DELETE_SECRET_KEY") {
     return state.withoutSecretKey()
+  }
+
+  if (action.type === "NAVIGATE_TO_BOOK_FROM_DUNGEON") {
+    console.log("NAVIGATE_TO_BOOK_FROM_DUNGEON triggered")
+    const newState = new WizStateSceneBookEntity({
+      type: "book",
+      bookType: "monster",
+      selectedIndex: null,
+      previousScene: {
+        type: "dungeon",
+        dungeonId: state.dungeonId,
+        depth: state.depth,
+      },
+      vault: state.vault.toObject(),
+      narrativeSettings: state.narrativeSettings,
+    })
+    console.log("New state type:", newState.type)
+    return newState
   }
 
   return state

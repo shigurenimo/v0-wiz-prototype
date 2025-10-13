@@ -17,7 +17,7 @@ async function _createWizState(): Promise<WizStateSceneDungeonBattleEntity> {
     enemies: [
       {
         id: "enemy-1",
-        enemyId: "goblin",
+        enemyId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         hp: 30,
         maxHp: 30,
       },
@@ -97,7 +97,7 @@ async function _createWizState(): Promise<WizStateSceneDungeonBattleEntity> {
               enemyId: "goblin",
             },
           ],
-          text: "薄暗い通路の先から、緑色の肌をした小柄な人型の怪物が現れた。ゴブリンだ。黄色く濁った目がこちらを見据え、錆びた短剣を構えている。",
+          text: "薄暗い通路の先から、緑色の肌をした小柄な人型の怪物が現れた。ヘドロだ。黄色く濁った目がこちらを見据えている。",
         },
       ],
       secretKey: null,
