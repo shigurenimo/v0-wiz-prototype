@@ -168,7 +168,6 @@ export function WizSceneViewDungeonBattle(props: Props) {
                 }
               }}
               variant="outline"
-              className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
               disabled={
                 api.isLoading ||
                 !inputValue.trim() ||
@@ -183,7 +182,6 @@ export function WizSceneViewDungeonBattle(props: Props) {
               onClick={() => props.dispatch({ type: "BATTLE_ATTACK" })}
               variant="outline"
               size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
             >
               たたかう
             </Button>
@@ -191,7 +189,6 @@ export function WizSceneViewDungeonBattle(props: Props) {
               onClick={() => props.dispatch({ type: "UNKNOWN" })}
               variant="outline"
               size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
             >
               どうぐ
             </Button>
@@ -199,7 +196,6 @@ export function WizSceneViewDungeonBattle(props: Props) {
               onClick={() => props.dispatch({ type: "END_COMBAT" })}
               variant="outline"
               size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
             >
               にげる
             </Button>

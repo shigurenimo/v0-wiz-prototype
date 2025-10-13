@@ -232,7 +232,6 @@ export function WizSceneViewDungeon(props: Props) {
                 }
               }}
               variant="outline"
-              className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
               disabled={
                 api.isLoading ||
                 !inputValue.trim() ||
@@ -248,7 +247,6 @@ export function WizSceneViewDungeon(props: Props) {
                 <Button
                   onClick={onFight}
                   variant="outline"
-                  className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
                   disabled={api.isLoading}
                 >
                   戦う
@@ -256,7 +254,6 @@ export function WizSceneViewDungeon(props: Props) {
                 <Button
                   onClick={onReturnHome}
                   variant="outline"
-                  className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
                   disabled={api.isLoading}
                 >
                   引き返す
@@ -266,7 +263,6 @@ export function WizSceneViewDungeon(props: Props) {
               <Button
                 onClick={onProceed}
                 variant="outline"
-                className="border-border bg-secondary font-mono text-base text-primary hover:bg-accent hover:text-primary"
                 disabled={api.isLoading}
               >
                 進む
@@ -278,7 +274,6 @@ export function WizSceneViewDungeon(props: Props) {
               onClick={() => props.dispatch({ type: "STOP" })}
               variant="outline"
               size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
             >
               たちどまる
             </Button>
@@ -286,7 +281,6 @@ export function WizSceneViewDungeon(props: Props) {
               onClick={() => props.dispatch({ type: "UNKNOWN" })}
               variant="outline"
               size="sm"
-              className="border-border bg-secondary font-mono text-primary hover:bg-accent hover:text-primary"
             >
               ???
             </Button>
