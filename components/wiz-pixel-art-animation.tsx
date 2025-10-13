@@ -1,5 +1,5 @@
 type Props = {
-  frames: number[][]
+  frames: number[][][]
   currentFrameIndex: number
   pixelSize?: number
 }
@@ -9,7 +9,7 @@ type Props = {
  *
  * 8x8のドット絵アニメーションを表示するコンポーネント（Component）
  * framesには複数のフレーム（Frame）データを配列で渡す
- * 各フレームは64個の0または1の配列（Array）
+ * 各フレームは8x8の2次元配列（0 or 1）
  * currentFrameIndexは親コンポーネント（Component）で管理する
  */
 export function WizPixelArtAnimation(props: Props) {
@@ -18,17 +18,19 @@ export function WizPixelArtAnimation(props: Props) {
 
   return (
     <div className="grid grid-cols-8">
-      {currentFrame?.map((pixel, i) => (
-        <div
-          key={`pixel-${props.currentFrameIndex}-${i}`}
-          className="bg-primary"
-          style={{
-            width: `${pixelSize}px`,
-            height: `${pixelSize}px`,
-            opacity: pixel,
-          }}
-        />
-      ))}
+      {currentFrame?.map((row, rowIndex) =>
+        row.map((pixel, colIndex) => (
+          <div
+            key={`pixel-${props.currentFrameIndex}-${rowIndex}-${colIndex}`}
+            className="bg-primary"
+            style={{
+              width: `${pixelSize}px`,
+              height: `${pixelSize}px`,
+              opacity: pixel,
+            }}
+          />
+        )),
+      )}
     </div>
   )
 }

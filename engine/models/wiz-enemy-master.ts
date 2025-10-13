@@ -7,6 +7,11 @@ import { z } from "zod"
  */
 export const zWizEnemyMaster = z.object({
   id: z.string(),
+  /**
+   * スラッグ（Slug）
+   * URL friendly identifier
+   */
+  slug: z.string(),
   name: z.string(),
   description: z.string(),
   /**
