@@ -132,4 +132,20 @@ export class WizStateCharacterEntity {
   get intelligence() {
     return this.props.baseIntelligencePoint + this.props.intelligencePoint
   }
+
+  /**
+   * 攻撃力
+   * (baseStrengthPoint + strengthPoint) * level
+   */
+  get atk() {
+    return this.strength * this.level.value
+  }
+
+  /**
+   * 防御力
+   * (baseDexterityPoint + dexterityPoint) * level
+   */
+  get def() {
+    return this.dexterity * this.level.value
+  }
 }

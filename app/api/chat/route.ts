@@ -3,7 +3,13 @@ import { WizStateCharacterEntity } from "@/engine/entities/wiz-state-character.e
 import { WizCharacterRepository } from "@/engine/repositories/wiz-character-repository"
 import { WizItemRepository } from "@/engine/repositories/wiz-item-repository"
 import { requestSchema } from "@/lib/ai/models"
+import { streamBattleActionMessage } from "@/lib/ai/stream-battle-action-message"
+import { streamBattleTurnStart } from "@/lib/ai/stream-battle-turn-start"
 import { streamDungeonChat } from "@/lib/ai/stream-dungeon-chat"
+import { streamEventBattle } from "@/lib/ai/stream-event-battle"
+import { streamEventDamage } from "@/lib/ai/stream-event-damage"
+import { streamEventItem } from "@/lib/ai/stream-event-item"
+import { streamEventScene } from "@/lib/ai/stream-event-scene"
 
 /**
  * - do NOT use try-catch here
@@ -42,6 +48,26 @@ export async function POST(request: Request) {
     apiKey: apiKey,
   })
 
+  if (body.type === "battleTurnStart") {
+    const result = streamBattleTurnStart({
+      google: google,
+      turn: body.turn,
+      allies: body.allies,
+      enemies: body.enemies,
+    })
+    return result.toTextStreamResponse()
+  }
+
+  if (body.type === "battleActionMessage") {
+    const result = streamBattleActionMessage({
+      google: google,
+      actionType: body.actionType,
+      actorName: body.actorName,
+      targetName: body.targetName,
+    })
+    return result.toTextStreamResponse()
+  }
+
   const partyInfo = body.state.vault.members
     .map((memberState) => {
       const character = characters.find((c) => c.id === memberState.id)
@@ -62,8 +88,6 @@ export async function POST(request: Request) {
     const event = eventGenerator.generate()
 
     if (event.type === "EVENT_SCENE") {
-      const streamEventScene = (await import("@/lib/ai/stream-event-scene"))
-        .streamEventScene
       const result = streamEventScene({
         google: google,
         partyInfo: partyInfo,
@@ -73,8 +97,6 @@ export async function POST(request: Request) {
     }
 
     if (event.type === "EVENT_DAMAGE") {
-      const streamEventDamage = (await import("@/lib/ai/stream-event-damage"))
-        .streamEventDamage
       const result = streamEventDamage({
         google: google,
         partyInfo: partyInfo,
@@ -85,8 +107,6 @@ export async function POST(request: Request) {
     }
 
     if (event.type === "EVENT_ITEM") {
-      const streamEventItem = (await import("@/lib/ai/stream-event-item"))
-        .streamEventItem
       const result = streamEventItem({
         google: google,
         partyInfo: partyInfo,
@@ -97,8 +117,6 @@ export async function POST(request: Request) {
     }
 
     if (event.type === "EVENT_BATTLE") {
-      const streamEventBattle = (await import("@/lib/ai/stream-event-battle"))
-        .streamEventBattle
       const result = streamEventBattle({
         google: google,
         partyInfo: partyInfo,

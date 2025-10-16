@@ -37,13 +37,19 @@ export class WizEventGenerator {
    */
   generate(): GeneratedEvent {
     // デバッグ用: 戦闘100%
-    const enemyId = ENEMY_IDS[Math.floor(Math.random() * ENEMY_IDS.length)]
+    const enemyId1 = ENEMY_IDS[Math.floor(Math.random() * ENEMY_IDS.length)]
+    const enemyId2 = ENEMY_IDS[Math.floor(Math.random() * ENEMY_IDS.length)]
+    const timestamp = Date.now()
     return {
       type: "EVENT_BATTLE",
       enemies: [
         {
-          id: `enemy-${Date.now()}`,
-          enemyId: enemyId,
+          id: `enemy-${timestamp}-1`,
+          enemyId: enemyId1,
+        },
+        {
+          id: `enemy-${timestamp}-2`,
+          enemyId: enemyId2,
         },
       ],
       text: "",

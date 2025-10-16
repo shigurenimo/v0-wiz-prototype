@@ -8,6 +8,8 @@ export const zWizEnemy = z.object({
   enemyId: z.string(),
   hp: z.number().int().min(0),
   maxHp: z.number().int().min(0),
+  atk: z.number().int().min(0),
+  def: z.number().int().min(0),
 })
 
 export type WizEnemy = z.infer<typeof zWizEnemy>

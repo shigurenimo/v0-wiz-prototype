@@ -154,7 +154,9 @@ export function WizSceneViewDungeon(props: Props) {
   }
 
   const streamingLogs =
-    api.object?.logs?.filter((log) => log !== undefined) ?? []
+    api.object && "logs" in api.object
+      ? (api.object.logs?.filter((log) => log !== undefined) ?? [])
+      : []
 
   const currentLogs = api.isLoading ? streamingLogs : []
 

@@ -37,6 +37,8 @@ export type WizAction =
   | { type: "INCREMENT_COMBAT_CHAT" }
   | { type: "END_COMBAT" }
   | { type: "BATTLE_ATTACK" }
+  | { type: "SET_BATTLE_MESSAGES"; payload: string[] }
+  | { type: "PROCESS_NEXT_ACTION" }
   | { type: "NEXT_CHAT" }
   | { type: "STOP" }
   | { type: "UNKNOWN" }

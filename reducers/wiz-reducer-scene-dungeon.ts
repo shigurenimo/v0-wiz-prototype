@@ -113,9 +113,13 @@ export function wizReducerSceneDungeon(
         enemyId: enemy.enemyId,
         hp: 30,
         maxHp: 30,
+        atk: 10,
+        def: 5,
       })),
       turn: 0,
       chatCount: 0,
+      actionQueue: [],
+      battleMessages: [],
       narrativeSettings: state.narrativeSettings,
       vault: state.vault.toObject(),
     })

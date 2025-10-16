@@ -20,10 +20,22 @@ async function _createWizState(): Promise<WizStateSceneDungeonBattleEntity> {
         enemyId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         hp: 30,
         maxHp: 30,
+        atk: 10,
+        def: 5,
+      },
+      {
+        id: "enemy-2",
+        enemyId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        hp: 30,
+        maxHp: 30,
+        atk: 10,
+        def: 5,
       },
     ],
     turn: 0,
     chatCount: 0,
+    actionQueue: [],
+    battleMessages: [],
     narrativeSettings: {
       tone: "dark",
       perspective: "second-person",
@@ -94,6 +106,10 @@ async function _createWizState(): Promise<WizStateSceneDungeonBattleEntity> {
           enemies: [
             {
               id: "enemy-1",
+              enemyId: "goblin",
+            },
+            {
+              id: "enemy-2",
               enemyId: "goblin",
             },
           ],

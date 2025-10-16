@@ -17,9 +17,7 @@ export const zWizSpriteSheet = z.object({
    * アニメーションフレーム（Animation Frame）
    * 各フレームは16x16の2次元配列（0 or 1）
    */
-  frames: z.array(
-    z.array(z.array(z.number().int()).length(16)).length(16),
-  ),
+  frames: z.array(z.array(z.array(z.number().int()).length(16)).length(16)),
 })
 
 export type WizSpriteSheet = z.infer<typeof zWizSpriteSheet>

@@ -28,13 +28,28 @@ export function WizChatMessage(props: Props) {
       ? undefined
       : (character?.name ?? "???")
 
+  // EVENT_ENEMY_ATTACKの場合、ダメージ情報を結合
+  let displayText = props.log.text ?? ""
+  if (props.log.type === "EVENT_ENEMY_ATTACK") {
+    const damage = "damage" in props.log ? props.log.damage : undefined
+    const targetCharacterId =
+      "targetCharacterId" in props.log ? props.log.targetCharacterId : undefined
+    const targetCharacter = targetCharacterId
+      ? props.members.find((m) => m.id === targetCharacterId)
+      : undefined
+
+    if (damage !== undefined && targetCharacter) {
+      displayText = `${props.log.text ?? ""} ${targetCharacter.name}は${damage}のダメージを受けた！`
+    }
+  }
+
   return (
     <div style={{ opacity: props.opacity }}>
       <div className="flex items-center gap-x-2">
         {characterName && (
           <div className="font-mono opacity-60">{characterName}</div>
         )}
-        <div className="font-mono text-primary">{props.log.text}</div>
+        <div className="font-mono text-primary">{displayText}</div>
       </div>
     </div>
   )

@@ -19,8 +19,8 @@ export function WizDungeonHeader(props: Props) {
   const player = new WizStateCharacterEntity(props.player)
 
   return (
-    <header className="flex w-full justify-start gap-2">
-      <div className="flex-1 font-mono text-primary text-sm">
+    <header className="fixed top-0 left-0 flex w-full justify-start gap-2 p-8">
+      <div className="flex flex-1 font-mono text-primary text-sm">
         <div>深度: {props.depth}</div>
         <div>Lv: {player.level.value}</div>
         <div>

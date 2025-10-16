@@ -47,6 +47,51 @@ export const zWizStateLogEventBattle = z.object({
   text: z.string(),
 })
 
+export const zWizStateLogEventPlayerAttack = z.object({
+  id: z.string(),
+  type: z.literal("EVENT_PLAYER_ATTACK"),
+  text: z.string(),
+  characterId: z.string(),
+})
+
+export const zWizStateLogEventEnemyAttack = z.object({
+  id: z.string(),
+  type: z.literal("EVENT_ENEMY_ATTACK"),
+  text: z.string(),
+  enemyId: z.string(),
+  damage: z.number(),
+  targetCharacterId: z.string(),
+  hpBefore: z.number(),
+  hpAfter: z.number(),
+})
+
+export const zWizStateLogEventPlayerDamage = z.object({
+  id: z.string(),
+  type: z.literal("EVENT_PLAYER_DAMAGE"),
+  text: z.string(),
+  damage: z.number(),
+  targetCharacterId: z.string(),
+  hpBefore: z.number(),
+  hpAfter: z.number(),
+})
+
+export const zWizStateLogEventEnemyDamage = z.object({
+  id: z.string(),
+  type: z.literal("EVENT_ENEMY_DAMAGE"),
+  text: z.string(),
+  damage: z.number(),
+  targetEnemyId: z.string(),
+  hpBefore: z.number(),
+  hpAfter: z.number(),
+})
+
+export const zWizStateLogEventBattleTurnStart = z.object({
+  id: z.string(),
+  type: z.literal("EVENT_BATTLE_TURN_START"),
+  text: z.string(),
+  turn: z.number(),
+})
+
 export const zWizStateLog = z.union([
   zWizStateLogEventUserChat,
   zWizStateLogEventChat,
@@ -54,4 +99,9 @@ export const zWizStateLog = z.union([
   zWizStateLogEventDamage,
   zWizStateLogEventItem,
   zWizStateLogEventBattle,
+  zWizStateLogEventPlayerAttack,
+  zWizStateLogEventEnemyAttack,
+  zWizStateLogEventPlayerDamage,
+  zWizStateLogEventEnemyDamage,
+  zWizStateLogEventBattleTurnStart,
 ])
