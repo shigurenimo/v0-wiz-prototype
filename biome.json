@@ -34,7 +34,6 @@
       "!.next",
       "!components.json",
       "!components/theme-provider.tsx",
-      "!components/typewriter-text.tsx",
       "!components/ui/**/*",
       "!hooks/use-toast.ts",
       "!lib/utils.ts",
