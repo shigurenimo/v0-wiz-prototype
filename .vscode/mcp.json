@@ -1,15 +1,15 @@
 {
   "servers": {
-    "playwright": {
+    "chrome-devtools": {
       "type": "stdio",
       "command": "bunx",
-      "args": ["@playwright/mcp"],
+      "args": ["chrome-devtools-mcp@latest", "--isolated"],
       "env": {}
     },
-    "context7": {
+    "shadcn": {
       "type": "stdio",
       "command": "bunx",
-      "args": ["@upstash/context7-mcp"],
+      "args": ["shadcn@latest", "mcp"],
       "env": {}
     }
   }

@@ -1,14 +1,13 @@
 {
   "mcpServers": {
-    "playwright": {
+    "chrome-devtools": {
       "command": "bunx",
-      "args": ["@playwright/mcp", "--isolated"],
+      "args": ["chrome-devtools-mcp@latest", "--isolated"],
       "env": {}
     },
-    "context7": {
+    "shadcn": {
       "command": "bunx",
-      "args": ["@upstash/context7-mcp"],
-      "env": {}
+      "args": ["shadcn@latest", "mcp"]
     }
   }
 }

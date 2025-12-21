@@ -12,14 +12,7 @@
       "nursery": {
         "useSortedClasses": "error"
       }
-    },
-    "includes": [
-      "**/*.ts",
-      "**/*.tsx",
-      "!components/ui/**/*",
-      "!hooks/use-toast.ts",
-      "!route-tree.gen.ts"
-    ]
+    }
   },
   "javascript": {
     "formatter": {
@@ -38,8 +31,7 @@
       "!hooks/use-toast.ts",
       "!lib/utils.ts",
       "!next.config.mjs",
-      "!postcss.config.mjs",
-      "!tailwind.config.ts"
+      "!postcss.config.mjs"
     ]
   }
 }
