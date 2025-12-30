@@ -3,6 +3,6 @@
 
 ## Rules
 
-- Always respond in Jpanese.
+- Always respond in Japanese.
 - Don't downgrade packages.
 - use Bun instead of npm or yarn.
