@@ -1,5 +1,5 @@
 ---
-name: inder-code-rules
+name: infer-code-rules
 description: "コードベースから設計パターン・規約を抽出してローカルルールに記録する。別のスキルから呼び出すか、コマンドで明示的に実行する。"
 disable-model-invocation: true
 ---
